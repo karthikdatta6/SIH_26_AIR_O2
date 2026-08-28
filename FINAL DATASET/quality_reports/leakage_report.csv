@@ -1,0 +1,6 @@
+audit_name,description,violations_found,status,severity
+SATELLITE_CAUSALITY_CHECK,Asserts satellite_observation_time <= current timestamp_utc (zero forward lookahead),0,PASSED,CRITICAL
+SATELLITE_AGE_WINDOW_CHECK,Asserts satellite observation age is strictly between 0h and 24h,0,PASSED,HIGH
+DUPLICATE_TIMESTAMPS_CHECK,"Asserts exactly one record per (station_id, timestamp_utc) tuple",0,PASSED,CRITICAL
+HOURLY_GRID_MONOTONICITY_CHECK,Asserts strictly continuous 1-hour steps across all stations (2023-2025),0,PASSED,HIGH
+TARGET_VARIABLES_VALIDITY_CHECK,"Asserts no negative concentrations in ground truth targets (OZONE, NO2)",0,PASSED,CRITICAL

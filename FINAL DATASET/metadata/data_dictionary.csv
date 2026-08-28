@@ -1,0 +1,46 @@
+column_name,data_type,source,original_variable,unit,description,processing,missing_allowed,role
+timestamp_utc,datetime64[ns],TIME_GRID,index,ISO-8601,Hourly standard timestamp in UTC (YYYY-MM-DD HH:00:00),Floored to 1-hour interval,NO,METADATA
+station_id,string,CONFIG,station_id,Text,Canonical CPCB monitoring station identifier,Standardized uppercase,NO,METADATA
+latitude,float64,CPCB_METADATA,latitude,Degrees North,Station latitude in WGS84,Verified against portal,NO,METADATA
+longitude,float64,CPCB_METADATA,longitude,Degrees East,Station longitude in WGS84,Verified against portal,NO,METADATA
+OZONE_ground,float64,CPCB_CAAQMS,Ozone,ug/m3,Ground-level Ozone (O3) concentration [PRIMARY FORECASTING TARGET 1],1-hr mean (>=3 valid 15-min readings),YES (Sensor gaps),TARGET
+OZONE_obs_count,float64,CPCB_CAAQMS,Ozone,Count,Number of valid 15-minute readings in the hour for Ozone,Count >= 3,YES,METADATA
+NO2_ground,float64,CPCB_CAAQMS,NO2,ug/m3,Ground-level Nitrogen Dioxide concentration [PRIMARY FORECASTING TARGET 2],1-hr mean (>=3 valid 15-min readings),YES (Sensor gaps),TARGET
+NO2_obs_count,float64,CPCB_CAAQMS,NO2,Count,Number of valid 15-minute readings in the hour for NO2,Count >= 3,YES,METADATA
+PM2.5_ground,float64,CPCB_CAAQMS,PM2.5,ug/m3,Fine particulate matter PM2.5,1-hr mean (>=3 valid 15-min readings),YES,PREDICTOR
+PM2.5_obs_count,float64,CPCB_CAAQMS,PM2.5,Count,Valid 15-min count for PM2.5,Count >= 3,YES,METADATA
+PM10_ground,float64,CPCB_CAAQMS,PM10,ug/m3,Coarse particulate matter PM10,1-hr mean (>=3 valid 15-min readings),YES,PREDICTOR
+PM10_obs_count,float64,CPCB_CAAQMS,PM10,Count,Valid 15-min count for PM10,Count >= 3,YES,METADATA
+NO_ground,float64,CPCB_CAAQMS,NO,ug/m3,Nitric Oxide concentration,1-hr mean (>=3 valid 15-min readings),YES,PREDICTOR
+NO_obs_count,float64,CPCB_CAAQMS,NO,Count,Valid 15-min count for NO,Count >= 3,YES,METADATA
+NOx_ground,float64,CPCB_CAAQMS,NOx,ppb,Oxides of Nitrogen concentration,1-hr mean (>=3 valid 15-min readings),YES,PREDICTOR
+NOx_obs_count,float64,CPCB_CAAQMS,NOx,Count,Valid 15-min count for NOx,Count >= 3,YES,METADATA
+NH3_ground,float64,CPCB_CAAQMS,NH3,ug/m3,Ammonia concentration,1-hr mean (>=3 valid 15-min readings),YES,PREDICTOR
+NH3_obs_count,float64,CPCB_CAAQMS,NH3,Count,Valid 15-min count for NH3,Count >= 3,YES,METADATA
+SO2_ground,float64,CPCB_CAAQMS,SO2,ug/m3,Sulphur Dioxide concentration,1-hr mean (>=3 valid 15-min readings),YES,PREDICTOR
+SO2_obs_count,float64,CPCB_CAAQMS,SO2,Count,Valid 15-min count for SO2,Count >= 3,YES,METADATA
+CO_ground,float64,CPCB_CAAQMS,CO,mg/m3,Carbon Monoxide concentration,1-hr mean (>=3 valid 15-min readings),YES,PREDICTOR
+CO_obs_count,float64,CPCB_CAAQMS,CO,Count,Valid 15-min count for CO,Count >= 3,YES,METADATA
+era5_temperature_k,float64,ERA5_REANALYSIS,t2m,Kelvin,2-meter air temperature in Kelvin,Direct extraction from nearest grid,NO,PREDICTOR
+era5_temperature_c,float64,ERA5_REANALYSIS,t2m,Degrees Celsius,,Kelvin - 273.15,NO,PREDICTOR
+era5_dewpoint_k,float64,ERA5_REANALYSIS,d2m,Kelvin,2-meter dewpoint temperature in Kelvin,Direct extraction from nearest grid,NO,PREDICTOR
+era5_dewpoint_c,float64,ERA5_REANALYSIS,d2m,Degrees Celsius,,Kelvin - 273.15,NO,PREDICTOR
+era5_u10,float64,ERA5_REANALYSIS,u10,m/s,10-meter zonal wind component (U-vector),Direct extraction from nearest grid,NO,PREDICTOR
+era5_v10,float64,ERA5_REANALYSIS,v10,m/s,10-meter meridional wind component (V-vector),Direct extraction from nearest grid,NO,PREDICTOR
+era5_wind_speed,float64,ERA5_REANALYSIS,derived,m/s,10-meter horizontal wind speed,sqrt(u10^2 + v10^2),NO,DERIVED FEATURE
+era5_wind_direction,float64,ERA5_REANALYSIS,derived,Degrees (0-360),,"Meteorological convention: (atan2(-u, -v)) % 360",NO,DERIVED FEATURE
+era5_relative_humidity,float64,ERA5_REANALYSIS,derived,%,Relative humidity computed from T and Td,Magnus-Tetens thermodynamic equation,NO,DERIVED FEATURE
+era5_surface_pressure_hpa,float64,ERA5_REANALYSIS,sp,hPa,Atmospheric surface pressure,Pa / 100.0,NO,PREDICTOR
+era5_boundary_layer_height,float64,ERA5_REANALYSIS,blh,meters,Planetary boundary layer height (BLH),Direct extraction from nearest grid,NO,PREDICTOR
+era5_solar_radiation_w_m2,float64,ERA5_REANALYSIS,ssrd,W/m2,Surface solar radiation downwards (SSRD),J/m2 divided by 3600s,NO,PREDICTOR
+era5_total_precipitation_mm,float64,ERA5_REANALYSIS,tp,mm,Total precipitation accumulation,meters * 1000.0,NO,PREDICTOR
+sat_NO2,float64,SENTINEL5P_TROPOMI,NO2,mol/m2,Sentinel-5P Tropospheric NO2 column density,+/-0.02 deg AOI mean (QA>=75 server-side mask),YES (Night/Clouds),PREDICTOR
+sat_CO,float64,SENTINEL5P_TROPOMI,CO,mol/m2,Sentinel-5P Total column Carbon Monoxide,+/-0.02 deg AOI mean (QA>=50 server-side mask),YES (Night/Clouds),PREDICTOR
+sat_HCHO,float64,SENTINEL5P_TROPOMI,HCHO,mol/m2,Sentinel-5P Tropospheric Formaldehyde column,+/-0.02 deg AOI mean (QA>=50 server-side mask),YES (Night/Clouds),PREDICTOR
+satellite_observation_time,datetime64[ns],SENTINEL5P_TROPOMI,observation_time,UTC datetime,Timestamp of the associated satellite overpass,Forward-matched <= current hour,YES,METADATA
+satellite_age_hours,float64,DERIVED,derived,Hours,Age of the satellite observation in hours (<=24h),Current hour - sat overpass hour,YES,DERIVED FEATURE
+geo_dist_to_nearest_road_m,float64,OSM_GEOSPATIAL,osm_roads,meters,Distance from monitoring station to nearest road,EPSG:32643 metric Euclidean distance,NO,STATIC FEATURE
+geo_road_length_1km_buffer_m,float64,OSM_GEOSPATIAL,osm_roads,meters,Total road network length within 1km radius buffer,Spatial intersection sum in EPSG:32643,NO,STATIC FEATURE
+geo_road_length_3km_buffer_m,float64,OSM_GEOSPATIAL,osm_roads,meters,Total road network length within 3km radius buffer,Spatial intersection sum in EPSG:32643,NO,STATIC FEATURE
+geo_dist_to_nearest_railway_m,float64,OSM_GEOSPATIAL,osm_railways,meters,Distance from station to nearest railway line,EPSG:32643 metric Euclidean distance,NO,STATIC FEATURE
+geo_dominant_landuse_1km,string,OSM_GEOSPATIAL,osm_landuse,Categorical,Dominant land-use classification within 1km buffer,Majority polygon class,NO,STATIC FEATURE

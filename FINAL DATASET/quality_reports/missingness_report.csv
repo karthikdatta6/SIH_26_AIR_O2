@@ -1,0 +1,141 @@
+station_id,source,variable,expected_hours,valid_observations,missing_observations,missing_percentage,longest_missing_gap_hours,scientific_reason
+ANAND_VIHAR,CPCB_GROUND,OZONE_ground,26304,21542,4762,18.1,236,Primary target (High Data Health)
+ANAND_VIHAR,CPCB_GROUND,NO2_ground,26304,22245,4059,15.43,255,Primary target (High Data Health)
+ANAND_VIHAR,CPCB_GROUND,CO_ground,26304,21026,5278,20.07,235,Normal sensor downtime
+ANAND_VIHAR,CPCB_GROUND,PM2.5_ground,26304,22307,3997,15.2,257,Normal sensor downtime
+ANAND_VIHAR,CPCB_GROUND,PM10_ground,26304,22470,3834,14.58,257,Normal sensor downtime
+ANAND_VIHAR,CPCB_GROUND,SO2_ground,26304,20597,5707,21.7,258,Normal sensor downtime
+ANAND_VIHAR,CPCB_GROUND,NH3_ground,26304,21858,4446,16.9,255,Normal sensor downtime
+ANAND_VIHAR,SENTINEL5P_SATELLITE,sat_NO2,1096,804,292,26.64,192,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+ANAND_VIHAR,SENTINEL5P_SATELLITE,sat_CO,1096,695,401,36.59,120,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+ANAND_VIHAR,SENTINEL5P_SATELLITE,sat_HCHO,1096,867,229,20.89,120,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+ANAND_VIHAR,ERA5_METEOROLOGY,era5_temperature_c,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+ANAND_VIHAR,ERA5_METEOROLOGY,era5_wind_speed,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+ANAND_VIHAR,ERA5_METEOROLOGY,era5_surface_pressure_hpa,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+ANAND_VIHAR,ERA5_METEOROLOGY,era5_boundary_layer_height,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+ITO,CPCB_GROUND,OZONE_ground,26304,25064,1240,4.71,390,Primary target (High Data Health)
+ITO,CPCB_GROUND,NO2_ground,26304,24793,1511,5.74,390,Primary target (High Data Health)
+ITO,CPCB_GROUND,CO_ground,26304,25204,1100,4.18,383,Normal sensor downtime
+ITO,CPCB_GROUND,PM2.5_ground,26304,24341,1963,7.46,383,Normal sensor downtime
+ITO,CPCB_GROUND,PM10_ground,26304,24403,1901,7.23,383,Normal sensor downtime
+ITO,CPCB_GROUND,SO2_ground,26304,24509,1795,6.82,383,Normal sensor downtime
+ITO,CPCB_GROUND,NH3_ground,26304,25027,1277,4.85,390,Normal sensor downtime
+ITO,SENTINEL5P_SATELLITE,sat_NO2,1096,803,293,26.73,96,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+ITO,SENTINEL5P_SATELLITE,sat_CO,1096,698,398,36.31,96,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+ITO,SENTINEL5P_SATELLITE,sat_HCHO,1096,874,222,20.26,96,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+ITO,ERA5_METEOROLOGY,era5_temperature_c,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+ITO,ERA5_METEOROLOGY,era5_wind_speed,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+ITO,ERA5_METEOROLOGY,era5_surface_pressure_hpa,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+ITO,ERA5_METEOROLOGY,era5_boundary_layer_height,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+OKHLA_PHASE_2,CPCB_GROUND,OZONE_ground,26304,23845,2459,9.35,166,Primary target (High Data Health)
+OKHLA_PHASE_2,CPCB_GROUND,NO2_ground,26304,24434,1870,7.11,166,Primary target (High Data Health)
+OKHLA_PHASE_2,CPCB_GROUND,CO_ground,26304,23836,2468,9.38,166,Normal sensor downtime
+OKHLA_PHASE_2,CPCB_GROUND,PM2.5_ground,26304,25447,857,3.26,166,Normal sensor downtime
+OKHLA_PHASE_2,CPCB_GROUND,PM10_ground,26304,25254,1050,3.99,166,Normal sensor downtime
+OKHLA_PHASE_2,CPCB_GROUND,SO2_ground,26304,24544,1760,6.69,166,Normal sensor downtime
+OKHLA_PHASE_2,CPCB_GROUND,NH3_ground,26304,24201,2103,7.99,166,Normal sensor downtime
+OKHLA_PHASE_2,SENTINEL5P_SATELLITE,sat_NO2,1096,805,291,26.55,96,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+OKHLA_PHASE_2,SENTINEL5P_SATELLITE,sat_CO,1096,714,382,34.85,96,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+OKHLA_PHASE_2,SENTINEL5P_SATELLITE,sat_HCHO,1096,889,207,18.89,72,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+OKHLA_PHASE_2,ERA5_METEOROLOGY,era5_temperature_c,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+OKHLA_PHASE_2,ERA5_METEOROLOGY,era5_wind_speed,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+OKHLA_PHASE_2,ERA5_METEOROLOGY,era5_surface_pressure_hpa,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+OKHLA_PHASE_2,ERA5_METEOROLOGY,era5_boundary_layer_height,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+AYA_NAGAR,CPCB_GROUND,OZONE_ground,26304,24954,1350,5.13,54,Primary target (High Data Health)
+AYA_NAGAR,CPCB_GROUND,NO2_ground,26304,25237,1067,4.06,48,Primary target (High Data Health)
+AYA_NAGAR,CPCB_GROUND,CO_ground,26304,25478,826,3.14,41,Normal sensor downtime
+AYA_NAGAR,CPCB_GROUND,PM2.5_ground,26304,24231,2073,7.88,57,Normal sensor downtime
+AYA_NAGAR,CPCB_GROUND,PM10_ground,26304,25099,1205,4.58,41,Normal sensor downtime
+AYA_NAGAR,CPCB_GROUND,SO2_ground,26304,0,26304,100.0,26304,Sensor absent at this station
+AYA_NAGAR,CPCB_GROUND,NH3_ground,26304,0,26304,100.0,26304,Sensor absent at this station
+AYA_NAGAR,SENTINEL5P_SATELLITE,sat_NO2,1096,816,280,25.55,96,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+AYA_NAGAR,SENTINEL5P_SATELLITE,sat_CO,1096,731,365,33.3,96,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+AYA_NAGAR,SENTINEL5P_SATELLITE,sat_HCHO,1096,865,231,21.08,552,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+AYA_NAGAR,ERA5_METEOROLOGY,era5_temperature_c,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+AYA_NAGAR,ERA5_METEOROLOGY,era5_wind_speed,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+AYA_NAGAR,ERA5_METEOROLOGY,era5_surface_pressure_hpa,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+AYA_NAGAR,ERA5_METEOROLOGY,era5_boundary_layer_height,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+RK_PURAM,CPCB_GROUND,OZONE_ground,26304,23815,2489,9.46,163,Primary target (High Data Health)
+RK_PURAM,CPCB_GROUND,NO2_ground,26304,24474,1830,6.96,162,Primary target (High Data Health)
+RK_PURAM,CPCB_GROUND,CO_ground,26304,22966,3338,12.69,162,Normal sensor downtime
+RK_PURAM,CPCB_GROUND,PM2.5_ground,26304,24394,1910,7.26,162,Normal sensor downtime
+RK_PURAM,CPCB_GROUND,PM10_ground,26304,23955,2349,8.93,162,Normal sensor downtime
+RK_PURAM,CPCB_GROUND,SO2_ground,26304,22655,3649,13.87,505,Normal sensor downtime
+RK_PURAM,CPCB_GROUND,NH3_ground,26304,24384,1920,7.3,162,Normal sensor downtime
+RK_PURAM,SENTINEL5P_SATELLITE,sat_NO2,1096,799,297,27.1,120,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+RK_PURAM,SENTINEL5P_SATELLITE,sat_CO,1096,697,399,36.41,96,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+RK_PURAM,SENTINEL5P_SATELLITE,sat_HCHO,1096,855,241,21.99,504,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+RK_PURAM,ERA5_METEOROLOGY,era5_temperature_c,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+RK_PURAM,ERA5_METEOROLOGY,era5_wind_speed,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+RK_PURAM,ERA5_METEOROLOGY,era5_surface_pressure_hpa,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+RK_PURAM,ERA5_METEOROLOGY,era5_boundary_layer_height,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+DHYAN_CHAND_STADIUM,CPCB_GROUND,OZONE_ground,26304,23133,3171,12.06,162,Primary target (High Data Health)
+DHYAN_CHAND_STADIUM,CPCB_GROUND,NO2_ground,26304,24930,1374,5.22,162,Primary target (High Data Health)
+DHYAN_CHAND_STADIUM,CPCB_GROUND,CO_ground,26304,23532,2772,10.54,165,Normal sensor downtime
+DHYAN_CHAND_STADIUM,CPCB_GROUND,PM2.5_ground,26304,24865,1439,5.47,162,Normal sensor downtime
+DHYAN_CHAND_STADIUM,CPCB_GROUND,PM10_ground,26304,24889,1415,5.38,162,Normal sensor downtime
+DHYAN_CHAND_STADIUM,CPCB_GROUND,SO2_ground,26304,24039,2265,8.61,162,Normal sensor downtime
+DHYAN_CHAND_STADIUM,CPCB_GROUND,NH3_ground,26304,23966,2338,8.89,576,Normal sensor downtime
+DHYAN_CHAND_STADIUM,SENTINEL5P_SATELLITE,sat_NO2,1096,810,286,26.09,96,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+DHYAN_CHAND_STADIUM,SENTINEL5P_SATELLITE,sat_CO,1096,698,398,36.31,120,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+DHYAN_CHAND_STADIUM,SENTINEL5P_SATELLITE,sat_HCHO,1096,856,240,21.9,600,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+DHYAN_CHAND_STADIUM,ERA5_METEOROLOGY,era5_temperature_c,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+DHYAN_CHAND_STADIUM,ERA5_METEOROLOGY,era5_wind_speed,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+DHYAN_CHAND_STADIUM,ERA5_METEOROLOGY,era5_surface_pressure_hpa,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+DHYAN_CHAND_STADIUM,ERA5_METEOROLOGY,era5_boundary_layer_height,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+MANDIR_MARG,CPCB_GROUND,OZONE_ground,26304,22430,3874,14.73,288,Primary target (High Data Health)
+MANDIR_MARG,CPCB_GROUND,NO2_ground,26304,23834,2470,9.39,288,Primary target (High Data Health)
+MANDIR_MARG,CPCB_GROUND,CO_ground,26304,22631,3673,13.96,288,Normal sensor downtime
+MANDIR_MARG,CPCB_GROUND,PM2.5_ground,26304,21963,4341,16.5,289,Normal sensor downtime
+MANDIR_MARG,CPCB_GROUND,PM10_ground,26304,23011,3293,12.52,290,Normal sensor downtime
+MANDIR_MARG,CPCB_GROUND,SO2_ground,26304,21236,5068,19.27,288,Normal sensor downtime
+MANDIR_MARG,CPCB_GROUND,NH3_ground,26304,23935,2369,9.01,288,Normal sensor downtime
+MANDIR_MARG,SENTINEL5P_SATELLITE,sat_NO2,1096,801,295,26.92,144,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+MANDIR_MARG,SENTINEL5P_SATELLITE,sat_CO,1096,698,398,36.31,96,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+MANDIR_MARG,SENTINEL5P_SATELLITE,sat_HCHO,1096,878,218,19.89,72,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+MANDIR_MARG,ERA5_METEOROLOGY,era5_temperature_c,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+MANDIR_MARG,ERA5_METEOROLOGY,era5_wind_speed,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+MANDIR_MARG,ERA5_METEOROLOGY,era5_surface_pressure_hpa,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+MANDIR_MARG,ERA5_METEOROLOGY,era5_boundary_layer_height,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+PUNJABI_BAGH,CPCB_GROUND,OZONE_ground,26304,23389,2915,11.08,163,Primary target (High Data Health)
+PUNJABI_BAGH,CPCB_GROUND,NO2_ground,26304,23723,2581,9.81,163,Primary target (High Data Health)
+PUNJABI_BAGH,CPCB_GROUND,CO_ground,26304,22825,3479,13.23,176,Normal sensor downtime
+PUNJABI_BAGH,CPCB_GROUND,PM2.5_ground,26304,24430,1874,7.12,163,Normal sensor downtime
+PUNJABI_BAGH,CPCB_GROUND,PM10_ground,26304,24419,1885,7.17,164,Normal sensor downtime
+PUNJABI_BAGH,CPCB_GROUND,SO2_ground,26304,21718,4586,17.43,177,Normal sensor downtime
+PUNJABI_BAGH,CPCB_GROUND,NH3_ground,26304,23661,2643,10.05,163,Normal sensor downtime
+PUNJABI_BAGH,SENTINEL5P_SATELLITE,sat_NO2,1096,798,298,27.19,144,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+PUNJABI_BAGH,SENTINEL5P_SATELLITE,sat_CO,1096,705,391,35.68,96,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+PUNJABI_BAGH,SENTINEL5P_SATELLITE,sat_HCHO,1096,874,222,20.26,96,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+PUNJABI_BAGH,ERA5_METEOROLOGY,era5_temperature_c,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+PUNJABI_BAGH,ERA5_METEOROLOGY,era5_wind_speed,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+PUNJABI_BAGH,ERA5_METEOROLOGY,era5_surface_pressure_hpa,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+PUNJABI_BAGH,ERA5_METEOROLOGY,era5_boundary_layer_height,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+JAHANGIRPURI,CPCB_GROUND,OZONE_ground,26304,23629,2675,10.17,163,Primary target (High Data Health)
+JAHANGIRPURI,CPCB_GROUND,NO2_ground,26304,24202,2102,7.99,162,Primary target (High Data Health)
+JAHANGIRPURI,CPCB_GROUND,CO_ground,26304,24025,2279,8.66,162,Normal sensor downtime
+JAHANGIRPURI,CPCB_GROUND,PM2.5_ground,26304,24343,1961,7.46,162,Normal sensor downtime
+JAHANGIRPURI,CPCB_GROUND,PM10_ground,26304,24426,1878,7.14,162,Normal sensor downtime
+JAHANGIRPURI,CPCB_GROUND,SO2_ground,26304,23036,3268,12.42,163,Normal sensor downtime
+JAHANGIRPURI,CPCB_GROUND,NH3_ground,26304,23858,2446,9.3,162,Normal sensor downtime
+JAHANGIRPURI,SENTINEL5P_SATELLITE,sat_NO2,1096,805,291,26.55,96,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+JAHANGIRPURI,SENTINEL5P_SATELLITE,sat_CO,1096,709,387,35.31,120,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+JAHANGIRPURI,SENTINEL5P_SATELLITE,sat_HCHO,1096,885,211,19.25,48,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+JAHANGIRPURI,ERA5_METEOROLOGY,era5_temperature_c,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+JAHANGIRPURI,ERA5_METEOROLOGY,era5_wind_speed,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+JAHANGIRPURI,ERA5_METEOROLOGY,era5_surface_pressure_hpa,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+JAHANGIRPURI,ERA5_METEOROLOGY,era5_boundary_layer_height,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+DWARKA_SECTOR_8,CPCB_GROUND,OZONE_ground,26304,24332,1972,7.5,162,Primary target (High Data Health)
+DWARKA_SECTOR_8,CPCB_GROUND,NO2_ground,26304,24638,1666,6.33,162,Primary target (High Data Health)
+DWARKA_SECTOR_8,CPCB_GROUND,CO_ground,26304,24289,2015,7.66,162,Normal sensor downtime
+DWARKA_SECTOR_8,CPCB_GROUND,PM2.5_ground,26304,25653,651,2.47,162,Normal sensor downtime
+DWARKA_SECTOR_8,CPCB_GROUND,PM10_ground,26304,25359,945,3.59,162,Normal sensor downtime
+DWARKA_SECTOR_8,CPCB_GROUND,SO2_ground,26304,24599,1705,6.48,162,Normal sensor downtime
+DWARKA_SECTOR_8,CPCB_GROUND,NH3_ground,26304,24669,1635,6.22,162,Normal sensor downtime
+DWARKA_SECTOR_8,SENTINEL5P_SATELLITE,sat_NO2,1096,810,286,26.09,96,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+DWARKA_SECTOR_8,SENTINEL5P_SATELLITE,sat_CO,1096,723,373,34.03,96,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+DWARKA_SECTOR_8,SENTINEL5P_SATELLITE,sat_HCHO,1096,872,224,20.44,72,Intermittent orbit overpass (~13:30 UTC) and cloud/QA filtering
+DWARKA_SECTOR_8,ERA5_METEOROLOGY,era5_temperature_c,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+DWARKA_SECTOR_8,ERA5_METEOROLOGY,era5_wind_speed,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+DWARKA_SECTOR_8,ERA5_METEOROLOGY,era5_surface_pressure_hpa,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
+DWARKA_SECTOR_8,ERA5_METEOROLOGY,era5_boundary_layer_height,35064,35064,0,0.0,0,Continuous numerical weather reanalysis
