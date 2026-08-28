@@ -1,0 +1,82 @@
+phase: 2
+version: "1.0.0"
+status: "FROZEN"
+author: "Sudhith"
+project: "SIH_25178"
+
+date_range:
+  start: "2023-01-01 00:00:00"
+  end: "2025-12-31 23:00:00"
+  frequency: "1h"
+  timezone: "UTC"
+
+canonical_stations:
+  - ANAND_VIHAR
+  - ITO
+  - OKHLA_PHASE_2
+  - AYA_NAGAR
+  - RK_PURAM
+  - DHYAN_CHAND_STADIUM
+  - MANDIR_MARG
+  - PUNJABI_BAGH
+  - JAHANGIRPURI
+  - DWARKA_SECTOR_8
+
+cpcb:
+  temporal_aggregation: "mean"
+  min_valid_samples_per_hour: 3
+  preserve_obs_count: true
+  target_pollutants:
+    - OZONE_ground
+    - NO2_ground
+  predictor_pollutants:
+    - PM2.5_ground
+    - PM10_ground
+    - CO_ground
+    - NO_ground
+    - NOx_ground
+    - NH3_ground
+    - SO2_ground
+
+sentinel5p:
+  spatial_buffer_degrees: 0.02
+  output_grid_size: 20
+  max_observation_age_hours: 24
+  qa_thresholds:
+    NO2: 75
+    CO: 50
+    HCHO: 50
+  variables:
+    - sat_NO2
+    - sat_CO
+    - sat_HCHO
+
+era5:
+  spatial_extraction: "nearest"
+  grid_resolution_deg: 0.25
+  variables:
+    - era5_temperature_c
+    - era5_dewpoint_c
+    - era5_wind_speed
+    - era5_wind_direction
+    - era5_relative_humidity
+    - era5_surface_pressure_hpa
+    - era5_boundary_layer_height
+    - era5_solar_radiation_w_m2
+    - era5_total_precipitation_mm
+
+geospatial:
+  crs_native: "EPSG:4326"
+  crs_projected: "EPSG:32643"
+  features:
+    - geo_dist_to_nearest_road_m
+    - geo_road_length_1km_buffer_m
+    - geo_road_length_3km_buffer_m
+    - geo_dist_to_nearest_railway_m
+    - geo_dominant_landuse_1km
+
+leakage_guard:
+  strict_causality: true
+  allow_future_satellite: false
+  allow_future_meteorology: false
+  allow_future_ground: false
