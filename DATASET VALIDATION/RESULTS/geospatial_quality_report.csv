@@ -1,0 +1,11 @@
+station_id,station_name,latitude,longitude,geo_dist_to_nearest_road_m,geo_road_length_1km_buffer_m,geo_road_length_3km_buffer_m,geo_dist_to_nearest_railway_m,geo_dominant_landuse_1km
+ANAND_VIHAR,Anand Vihar,28.646835,77.316032,14.98,58409.77,625497.3,0.63,park
+ITO,ITO,28.628624,77.24106,11.71,83004.39,593869.58,2.36,commercial
+OKHLA_PHASE_2,Okhla Phase-II,28.530785,77.271255,18.41,67794.67,561714.08,1071.71,commercial
+AYA_NAGAR,Aya Nagar,28.4706914,77.1099364,58.71,32456.88,461528.84,1205.56,residential
+RK_PURAM,R.K. Puram,28.674045,77.131023,4.43,67561.55,786196.15,91.96,residential
+DHYAN_CHAND_STADIUM,Major Dhyan Chand National Stadium,28.611281,77.237738,7.52,82030.57,640024.14,1034.87,grass
+MANDIR_MARG,Mandir Marg,28.636429,77.201067,33.23,64959.45,727848.42,654.93,park
+PUNJABI_BAGH,Punjabi Bagh,28.563262,77.186937,5.7,93498.13,739812.9,776.81,park
+JAHANGIRPURI,Jahangirpuri,28.73282,77.170633,25.37,114011.23,800503.48,358.3,park
+DWARKA_SECTOR_8,Dwarka-Sector 8,28.5710274,77.0719006,5.18,74105.85,630087.46,480.34,park

@@ -1,0 +1,11 @@
+station_id,station_name,latitude,longitude,cpcb_years_available,cpcb_file_count,s5p_processed_files,era5_mapping_status,geospatial_features_status,phase2_ready
+ANAND_VIHAR,Anand Vihar,28.646835,77.316032,"2023,2024,2025",3,4732,YES (Delhi Grid 0.25deg),YES (OSM Roads/Landuse/Infra),YES
+ITO,ITO,28.628624,77.24106,"2023,2024,2025",3,4750,YES (Delhi Grid 0.25deg),YES (OSM Roads/Landuse/Infra),YES
+OKHLA_PHASE_2,Okhla Phase-II,28.530785,77.271255,"2023,2024,2025",3,4816,YES (Delhi Grid 0.25deg),YES (OSM Roads/Landuse/Infra),YES
+AYA_NAGAR,Aya Nagar,28.4706914,77.1099364,"2023,2024,2025",3,4824,YES (Delhi Grid 0.25deg),YES (OSM Roads/Landuse/Infra),YES
+RK_PURAM,R.K. Puram,28.674045,77.131023,"2023,2024,2025",3,4702,YES (Delhi Grid 0.25deg),YES (OSM Roads/Landuse/Infra),YES
+DHYAN_CHAND_STADIUM,Major Dhyan Chand National Stadium,28.611281,77.237738,"2023,2024,2025",3,4728,YES (Delhi Grid 0.25deg),YES (OSM Roads/Landuse/Infra),YES
+MANDIR_MARG,Mandir Marg,28.636429,77.201067,"2023,2024,2025",3,4754,YES (Delhi Grid 0.25deg),YES (OSM Roads/Landuse/Infra),YES
+PUNJABI_BAGH,Punjabi Bagh,28.563262,77.186937,"2023,2024,2025",3,4754,YES (Delhi Grid 0.25deg),YES (OSM Roads/Landuse/Infra),YES
+JAHANGIRPURI,Jahangirpuri,28.73282,77.170633,"2023,2024,2025",3,4798,YES (Delhi Grid 0.25deg),YES (OSM Roads/Landuse/Infra),YES
+DWARKA_SECTOR_8,Dwarka-Sector 8,28.5710274,77.0719006,"2023,2024,2025",3,4810,YES (Delhi Grid 0.25deg),YES (OSM Roads/Landuse/Infra),YES
