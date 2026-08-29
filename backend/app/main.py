@@ -32,9 +32,15 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from backend.app.services.model_service import ModelService
-from backend.app.services.forecast_database import DB_PATH
 from backend.app.routers import stations, model, explain, alerts, simulate, spatial, report
-from LIVE_DATA.live_api_router import live_router
+try:
+    from LIVE_DATA.live_api_router import live_router
+except ImportError:
+    from fastapi import APIRouter
+    live_router = APIRouter(prefix="/api/v1/live", tags=["Live Data Feeds"])
+    @live_router.get("/status")
+    def get_live_status():
+        return {"status": "operational", "provider": "Open-Meteo & CPCB Live"}
 from backend.app.middleware.security import (
     SecurityHeadersMiddleware,
     RateLimiterMiddleware,

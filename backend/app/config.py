@@ -8,21 +8,28 @@ import os
 _HERE = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(_HERE, "..", ".."))
 
+def _find_path(*rel_paths):
+    for rel in rel_paths:
+        full = os.path.join(PROJECT_ROOT, rel)
+        if os.path.exists(full):
+            return full
+    return os.path.join(PROJECT_ROOT, rel_paths[0])
+
 # Production model artifact paths (canonical location per handoff doc Section 7)
-MODEL_NO2_PATH          = os.path.join(PROJECT_ROOT, "models", "NO2", "model.pkl")
-MODEL_O3_PATH           = os.path.join(PROJECT_ROOT, "models", "O3",  "model.pkl")
-MODEL_NO2_SCHEMA_PATH   = os.path.join(PROJECT_ROOT, "models", "NO2", "feature_schema.json")
-MODEL_O3_SCHEMA_PATH    = os.path.join(PROJECT_ROOT, "models", "O3",  "feature_schema.json")
-MODEL_NO2_METADATA_PATH = os.path.join(PROJECT_ROOT, "models", "NO2", "metadata.json")
-MODEL_O3_METADATA_PATH  = os.path.join(PROJECT_ROOT, "models", "O3",  "metadata.json")
+MODEL_NO2_PATH          = _find_path("MODEL CODE/07_PRODUCTION_MODEL_BUNDLES/NO2/model.pkl", "models/NO2/model.pkl")
+MODEL_O3_PATH           = _find_path("MODEL CODE/07_PRODUCTION_MODEL_BUNDLES/O3/model.pkl", "models/O3/model.pkl")
+MODEL_NO2_SCHEMA_PATH   = _find_path("MODEL CODE/07_PRODUCTION_MODEL_BUNDLES/NO2/feature_schema.json", "models/NO2/feature_schema.json")
+MODEL_O3_SCHEMA_PATH    = _find_path("MODEL CODE/07_PRODUCTION_MODEL_BUNDLES/O3/feature_schema.json", "models/O3/feature_schema.json")
+MODEL_NO2_METADATA_PATH = _find_path("MODEL CODE/07_PRODUCTION_MODEL_BUNDLES/NO2/metadata.json", "models/NO2/metadata.json")
+MODEL_O3_METADATA_PATH  = _find_path("MODEL CODE/07_PRODUCTION_MODEL_BUNDLES/O3/metadata.json", "models/O3/metadata.json")
 
 # SHAP attribution files
-SHAP_NO2_CSV = os.path.join(PROJECT_ROOT, "results", "figures", "shap_top10_NO2.csv")
-SHAP_O3_CSV  = os.path.join(PROJECT_ROOT, "results", "figures", "shap_top10_O3.csv")
+SHAP_NO2_CSV = _find_path("MODEL RESULTS/02_VISUALIZATIONS_AND_SHAP/shap_top10_NO2.csv", "results/figures/shap_top10_NO2.csv")
+SHAP_O3_CSV  = _find_path("MODEL RESULTS/02_VISUALIZATIONS_AND_SHAP/shap_top10_O3.csv", "results/figures/shap_top10_O3.csv")
 
 # Golden reference paths
-GOLDEN_001_INPUT  = os.path.join(PROJECT_ROOT, "integration_test", "GOLDEN_001", "input.json")
-GOLDEN_001_OUTPUT = os.path.join(PROJECT_ROOT, "integration_test", "GOLDEN_001", "expected_output.json")
+GOLDEN_001_INPUT  = _find_path("MODEL OUTPUT VALIDATION/01_GOLDEN_COMPATIBILITY_TESTS/input.json", "integration_test/GOLDEN_001/input.json")
+GOLDEN_001_OUTPUT = _find_path("MODEL OUTPUT VALIDATION/01_GOLDEN_COMPATIBILITY_TESTS/expected_output.json", "integration_test/GOLDEN_001/expected_output.json")
 
 API_VERSION   = "v1"
 MODEL_VERSION = "1.0.0"

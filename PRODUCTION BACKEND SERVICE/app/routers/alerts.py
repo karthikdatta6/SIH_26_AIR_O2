@@ -18,7 +18,8 @@ from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
 from backend.app.services.model_service import ModelService
-from LIVE_DATA.live_weather_service import fetch_live_weather, fetch_live_air_chemistry
+from backend.app.providers.live.weather import fetch_live_weather
+from backend.app.providers.live.cams import fetch_live_air_chemistry
 from backend.app.schemas.station import STATIONS_DATA, STATIONS_LOOKUP
 from backend.app.utils.aqi import calculate_aqi, calculate_composite_aqi
 from backend.app.config import FORECAST_HORIZONS, MODEL_VERSION
@@ -176,9 +177,26 @@ def get_custom_location_forecast(
     """
     # 1. Fetch live 58 features and weather for custom GPS coordinates
     now_dt = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=5, minutes=30)))
-    from LIVE_DATA.live_feature_assembler import build_live_58_features
-    features_58, weather = build_live_58_features(station_id="ANAND_VIHAR", target_dt=now_dt, custom_lat=lat, custom_lon=lon)
+    weather = fetch_live_weather(lat, lon)
     cams = fetch_live_air_chemistry(lat, lon)
+    feature_names = ModelService.get_feature_names("NO2")
+    from backend.app.utils.feature_builder import build_feature_vector
+    raw_feats = {
+        "t2m": weather.get("t2m", 298.15),
+        "rh": weather.get("rh", 55.0),
+        "sp": weather.get("sp", 101325.0),
+        "u10": weather.get("u10", 3.0),
+        "v10": weather.get("v10", 0.0),
+        "blh": weather.get("blh", 850.0),
+        "ssrd": weather.get("ssrd", 350.0),
+        "no2": cams.get("NO2_ground", 32.0),
+        "o3": cams.get("O3_ground", 28.0),
+        "pm25": cams.get("PM2.5_ground", 45.0),
+        "pm10": cams.get("PM10_ground", 95.0),
+        "so2": cams.get("SO2_ground", 12.0),
+        "co": cams.get("CO_ground", 1.1),
+    }
+    features_58 = build_feature_vector("ANAND_VIHAR", raw_feats, feature_names)
     
     # 2. Run model predictions for NO2 and O3
     no2_preds = ModelService.predict("NO2", "ANAND_VIHAR", features_58)

@@ -175,6 +175,9 @@ def build_feature_vector_from_dict(
     return result
 
 
+build_feature_vector = build_feature_vector_from_dict
+
+
 def build_demo_feature_vector(
     station_id: str,
     feature_names: list,

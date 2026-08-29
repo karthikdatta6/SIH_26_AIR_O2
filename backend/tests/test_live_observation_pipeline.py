@@ -4,9 +4,13 @@ Unit and integration tests for the live observation pipeline, ObservationStore,
 FeatureService, and provider mode switching.
 """
 import os
+import sys
 import uuid
 import datetime
 import pytest
+
+# Allow import from project root
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 
 from backend.app.providers.base import Observation
 from backend.app.providers.historical import HistoricalObservationProvider
