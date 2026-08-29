@@ -1,0 +1,87 @@
+{
+  "test_id": "GOLDEN_001",
+  "station_id": "ANAND_VIHAR",
+  "forecast_generated_at": "2025-10-08 06:00:00",
+  "model_version": "1.0.0",
+  "feature_schema_version": "1.0.0",
+  "numerical_tolerance_ug_m3": 0.001,
+  "note": "Expected values generated from JSON-parsed input.json features (6 decimal place precision). Bit-identical to what ModelService will produce.",
+  "forecasts": {
+    "NO2": [
+      {
+        "horizon_hours": 1,
+        "target_timestamp": "2025-10-08T07:00:00",
+        "prediction": 17.441423580220633,
+        "unit": "ug/m3"
+      },
+      {
+        "horizon_hours": 3,
+        "target_timestamp": "2025-10-08T09:00:00",
+        "prediction": 19.417512773218323,
+        "unit": "ug/m3"
+      },
+      {
+        "horizon_hours": 6,
+        "target_timestamp": "2025-10-08T12:00:00",
+        "prediction": 26.025242365005106,
+        "unit": "ug/m3"
+      },
+      {
+        "horizon_hours": 12,
+        "target_timestamp": "2025-10-08T18:00:00",
+        "prediction": 24.48558596968808,
+        "unit": "ug/m3"
+      },
+      {
+        "horizon_hours": 24,
+        "target_timestamp": "2025-10-09T06:00:00",
+        "prediction": 18.882541920973768,
+        "unit": "ug/m3"
+      },
+      {
+        "horizon_hours": 48,
+        "target_timestamp": "2025-10-10T06:00:00",
+        "prediction": 21.413902483785606,
+        "unit": "ug/m3"
+      }
+    ],
+    "O3": [
+      {
+        "horizon_hours": 1,
+        "target_timestamp": "2025-10-08T07:00:00",
+        "prediction": 18.157223445097184,
+        "unit": "ug/m3"
+      },
+      {
+        "horizon_hours": 3,
+        "target_timestamp": "2025-10-08T09:00:00",
+        "prediction": 17.404306294852915,
+        "unit": "ug/m3"
+      },
+      {
+        "horizon_hours": 6,
+        "target_timestamp": "2025-10-08T12:00:00",
+        "prediction": 10.141369048333377,
+        "unit": "ug/m3"
+      },
+      {
+        "horizon_hours": 12,
+        "target_timestamp": "2025-10-08T18:00:00",
+        "prediction": 10.222068495284235,
+        "unit": "ug/m3"
+      },
+      {
+        "horizon_hours": 24,
+        "target_timestamp": "2025-10-09T06:00:00",
+        "prediction": 24.087862651600833,
+        "unit": "ug/m3"
+      },
+      {
+        "horizon_hours": 48,
+        "target_timestamp": "2025-10-10T06:00:00",
+        "prediction": 29.08507523457703,
+        "unit": "ug/m3"
+      }
+    ]
+  }
+}
