@@ -1,0 +1,301 @@
+{
+  "model_version": "1.0.0",
+  "target": "OZONE_ground",
+  "target_short": "O3",
+  "feature_count": 58,
+  "features": [
+    {
+      "name": "PM2.5_ground",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "PM10_ground",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "NO_ground",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "NOx_ground",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "NH3_ground",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "SO2_ground",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "CO_ground",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "era5_temperature_c",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "era5_dewpoint_c",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "era5_u10",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "era5_v10",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "era5_wind_speed",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "era5_relative_humidity",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "era5_surface_pressure_hpa",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "era5_boundary_layer_height",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "era5_solar_radiation_w_m2",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "era5_total_precipitation_mm",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "sat_NO2",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "sat_CO",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "sat_HCHO",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "satellite_age_hours",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "geo_dist_to_nearest_road_m",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "geo_road_length_1km_buffer_m",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "geo_road_length_3km_buffer_m",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "geo_dist_to_nearest_railway_m",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "station_enc",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "hour_sin",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "hour_cos",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "doy_sin",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "doy_cos",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "wind_sin",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "wind_cos",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "ventilation_coeff",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "photo_index",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "sat_NO2_available",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "sat_CO_available",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "landuse_commercial",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "landuse_grass",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "landuse_park",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "landuse_residential",
+      "dtype": "float64",
+      "missing_strategy": "error"
+    },
+    {
+      "name": "OZONE_ground_lag_1h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "OZONE_ground_lag_3h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "OZONE_ground_lag_6h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "OZONE_ground_lag_12h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "OZONE_ground_lag_24h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "OZONE_ground_roll_mean_6h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "OZONE_ground_roll_std_6h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "OZONE_ground_roll_mean_24h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "OZONE_ground_roll_std_24h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "NO2_ground_lag_1h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "NO2_ground_lag_3h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "NO2_ground_lag_6h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "NO2_ground_lag_12h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "NO2_ground_lag_24h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "NO2_ground_roll_mean_6h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "NO2_ground_roll_std_6h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "NO2_ground_roll_mean_24h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    },
+    {
+      "name": "NO2_ground_roll_std_24h",
+      "dtype": "float64",
+      "missing_strategy": "native_nan"
+    }
+  ],
+  "input_frequency": "hourly",
+  "target_unit": "ug/m3",
+  "transform": "log1p applied during training; expm1 for inference"
+}

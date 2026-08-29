@@ -1,0 +1,26 @@
+{
+  "model_name": "LightGBM_NO2",
+  "target_variable": "NO2_ground",
+  "forecast_horizons_hours": [
+    1,
+    3,
+    6,
+    12,
+    24,
+    48
+  ],
+  "training_period": "2023-01-01 to 2024-12-31",
+  "validation_period": "2025-01-01 to 2025-06-30",
+  "test_period": "2025-07-01 to 2025-12-31",
+  "n_stations": 10,
+  "algorithm": "LightGBM (regression_l1 objective)",
+  "metrics": {
+    "h1_r2": 0.9191,
+    "h1_rmse": 10.644,
+    "h24_r2": 0.7662,
+    "h24_rmse": 18.118,
+    "h48_r2": 0.7155,
+    "h48_rmse": 20.01
+  },
+  "trained_at": "2026-08-23T00:46:54.361258"
+}

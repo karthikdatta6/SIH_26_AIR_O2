@@ -1,0 +1,26 @@
+{
+  "model_name": "LightGBM_O3",
+  "target_variable": "OZONE_ground",
+  "forecast_horizons_hours": [
+    1,
+    3,
+    6,
+    12,
+    24,
+    48
+  ],
+  "training_period": "2023-01-01 to 2024-12-31",
+  "validation_period": "2025-01-01 to 2025-06-30",
+  "test_period": "2025-07-01 to 2025-12-31",
+  "n_stations": 10,
+  "algorithm": "LightGBM (regression_l1 objective)",
+  "metrics": {
+    "h1_r2": 0.8689,
+    "h1_rmse": 13.013,
+    "h24_r2": 0.7559,
+    "h24_rmse": 17.781,
+    "h48_r2": 0.6975,
+    "h48_rmse": 19.832
+  },
+  "trained_at": "2026-08-23T00:46:23.649847"
+}
