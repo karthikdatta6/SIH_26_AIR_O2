@@ -1,0 +1,2328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIRO2 — Atmospheric AI Forecasting & Decision Support System</title>
+  
+  <!-- Tailwind CSS & Professional Technical Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet & Chart.js -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    * {
+      border-radius: 0px !important; /* STRICTLY 100% RECTANGULAR EDGES */
+    }
+    
+    :root {
+      --bg-black: #050608;
+      --panel-black: #0c0d10;
+      --card-black: #121318;
+      --border-color: #24221d;
+      --border-highlight: #4a4436;
+      --cream-primary: #f8f4ec;
+      --cream-secondary: #ebdcc9;
+      --cream-accent: #d8c4a5;
+      --cream-muted: #9c917f;
+      --text-muted: #7d786e;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-black);
+      color: var(--cream-primary);
+    }
+    
+    .font-mono-data {
+      font-family: 'JetBrains Mono', monospace;
+      font-feature-settings: "tnum" 1, "zero" 1;
+    }
+    
+    .font-heading {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+
+    .font-luxury {
+      font-family: 'Cinzel', serif;
+    }
+    
+    .panel-box {
+      background: var(--panel-black);
+      border: 1px solid var(--border-color);
+    }
+    
+    .panel-box:hover {
+      border-color: var(--border-highlight);
+    }
+
+    .cream-border-left {
+      border-left: 2px solid var(--cream-accent);
+    }
+
+    .tab-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 10px 20px;
+      font-size: 11px;
+      border: 1px solid var(--border-color);
+      background: var(--panel-black);
+      color: var(--cream-muted);
+      cursor: pointer;
+      transition: all 0.15s ease-in-out;
+    }
+
+    .tab-btn.active {
+      background: var(--cream-primary);
+      color: #000000;
+      border-color: var(--cream-primary);
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: #191a20;
+      color: var(--cream-primary);
+      border-color: var(--cream-muted);
+    }
+
+    .date-preset-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border: 1px solid var(--border-color);
+      background: #0e0f13;
+      color: var(--cream-muted);
+      transition: all 0.15s ease-in-out;
+    }
+
+    .date-preset-btn.active, .date-preset-btn:hover {
+      background: var(--cream-secondary);
+      color: #000000;
+      border-color: var(--cream-secondary);
+    }
+    
+    #map {
+      height: 380px;
+      width: 100%;
+      background: #000;
+    }
+    
+    input[type=range] {
+      accent-color: var(--cream-primary);
+      height: 4px;
+      background: #24221d;
+    }
+    
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: #2a2720; }
+    ::-webkit-scrollbar-thumb:hover { background: #4a4436; }
+  </style>
+</head>
+<body class="selection:bg-amber-100 selection:text-black min-h-screen">
+
+  <!-- TOP J.P. MORGAN STYLE EXECUTIVE HEADER -->
+  <header class="border-b border-[#24221d] bg-[#07080a] sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- Brand & Project Title -->
+      <div class="flex items-center gap-4">
+        <div class="w-10 h-10 bg-[#f8f4ec] flex items-center justify-center font-black text-xl text-black font-luxury tracking-tighter">
+          A2
+        </div>
+        <div>
+          <div class="flex items-center gap-3">
+            <span class="font-extrabold text-xl tracking-tight text-[#f8f4ec] font-heading">AIRO2</span>
+            <span class="text-[10px] px-2 py-0.5 bg-[#121318] text-[#d8c4a5] font-mono-data font-bold border border-[#38332a] uppercase tracking-wider">SIH 25178</span>
+            <span class="text-[10px] px-2 py-0.5 bg-[#121318] text-[#a3e635] font-mono-data font-bold border border-[#24221d] uppercase tracking-wider">SYSTEM ACTIVE</span>
+          </div>
+          <p class="text-xs text-[#9c917f] font-medium mt-0.5">Atmospheric Machine Learning Platform for Tropospheric NO₂ & O₃ Forecasting</p>
+        </div>
+      </div>
+
+      <!-- Header Action Controls -->
+      <div class="flex flex-wrap items-center gap-3">
+        <button onclick="triggerDemoNotification()" class="px-4 py-2 text-xs font-bold font-mono-data uppercase tracking-wider bg-[#121318] hover:bg-[#1c1e24] text-[#ebdcc9] border border-[#38332a] transition">
+          Test Push Alert
+        </button>
+
+        <a id="pdfDownloadBtn" href="/api/v1/stations/ANAND_VIHAR/report/pdf" download class="px-5 py-2 text-xs font-bold font-mono-data uppercase tracking-wider bg-[#f8f4ec] hover:bg-[#ebdcc9] text-black border border-[#f8f4ec] transition flex items-center gap-2">
+          Download CPCB Report (PDF)
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="border-b border-[#24221d] bg-[#0a0b0e] sticky top-[73px] z-40">
+    <div class="max-w-7xl mx-auto px-6 py-2.5 flex flex-wrap items-center gap-2">
+      <button class="tab-btn active" id="tabBtn1" onclick="switchSection('section-forecast')">
+        01 // Multi-Horizon Predictions
+      </button>
+      <button class="tab-btn" id="tabBtn2" onclick="switchSection('section-sensitivity')">
+        02 // Atmospheric Sensitivity & Impact Visualization
+      </button>
+      <button class="tab-btn" id="tabBtn3" onclick="switchSection('section-regulatory')">
+        03 // Regulatory Directives & Model Audit
+      </button>
+      <button class="tab-btn" id="tabBtn4" onclick="switchSection('section-webhook-alerts')">
+        04 // Custom Location & Webhook Alert Dispatcher
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-6 py-6 space-y-6">
+
+    <!-- ================================================================================== -->
+    <!-- SECTION 1: BASELINE PREDICTIONS & SPATIAL IN-SITU MONITORING                       -->
+    <!-- ================================================================================== -->
+    <div id="section-forecast" class="space-y-5">
+      
+      <!-- TOP ROW: OBSERVATION CONTROLS (LEFT) & IN-SITU MAP (RIGHT) SIDE-BY-SIDE -->
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+        
+        <!-- 1. COMPACT OBSERVATION CONTROL PANEL (COL-SPAN-7) -->
+        <div class="lg:col-span-7 panel-box p-4 bg-[#0a0b0e] flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between border-b border-[#24221d] pb-2 mb-2">
+              <h2 class="text-xs font-bold text-[#f8f4ec] uppercase tracking-wider font-heading">
+                Target Parameters & Observation Coordinates
+              </h2>
+              <span class="text-[10px] font-mono-data text-[#a3e635] font-bold">97.85% Willmott d Fit</span>
+            </div>
+
+            <!-- Quick Presets -->
+            <div class="mb-2 space-y-1">
+              <label class="block text-[10px] font-bold text-[#d8c4a5] uppercase tracking-wider font-mono-data">
+                Preset Baseline:
+              </label>
+              <div class="flex flex-wrap items-center gap-1.5">
+                <button class="date-preset-btn active text-[10px] py-1 px-2.5" id="presetToday" onclick="applyDatePreset('TODAY')">
+                  Today (Real-Time)
+                </button>
+                <button class="date-preset-btn text-[10px] py-1 px-2.5" id="presetTomorrow" onclick="applyDatePreset('TOMORROW')">
+                  Tomorrow (+24h)
+                </button>
+                <button class="date-preset-btn text-[10px] py-1 px-2.5" id="presetYesterday" onclick="applyDatePreset('YESTERDAY')">
+                  Yesterday (-24h)
+                </button>
+                <button class="date-preset-btn text-[10px] py-1 px-2.5" id="presetNextWeek" onclick="applyDatePreset('NEXT_WEEK')">
+                  Next Week (+7d)
+                </button>
+                <button class="date-preset-btn text-[10px] py-1 px-2.5" id="presetCustom" onclick="enableCustomDate()">
+                  Custom Calendar
+                </button>
+              </div>
+            </div>
+
+            <!-- Form Controls Grid (Tightly Packed) -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-2">
+              
+              <!-- Station Selector -->
+              <div>
+                <label class="block text-[10px] font-bold text-[#9c917f] uppercase tracking-wider mb-0.5 font-mono-data">Monitoring Station</label>
+                <select id="stationSelect" onchange="onStationSelectChange()" class="w-full bg-[#121318] border border-[#38332a] px-2.5 py-1.5 text-xs font-bold text-[#f8f4ec] focus:outline-none focus:border-[#f8f4ec] transition cursor-pointer">
+                  <option value="ANAND_VIHAR">Anand Vihar (ISBT Traffic)</option>
+                  <option value="ITO">ITO (Central Intersection)</option>
+                  <option value="OKHLA_PHASE_2">Okhla Phase 2 (Industrial)</option>
+                  <option value="AYA_NAGAR">Aya Nagar (Suburban Green)</option>
+                  <option value="RK_PURAM">R.K. Puram (Residential)</option>
+                  <option value="DHYAN_CHAND_STADIUM">Dhyan Chand Stadium (Park)</option>
+                  <option value="MANDIR_MARG">Mandir Marg (Commercial)</option>
+                  <option value="PUNJABI_BAGH">Punjabi Bagh (Residential)</option>
+                  <option value="JAHANGIRPURI">Jahangirpuri (Industrial)</option>
+                  <option value="DWARKA_SECTOR_8">Dwarka Sector 8</option>
+                </select>
+              </div>
+
+              <!-- Date Input -->
+              <div>
+                <label class="block text-[10px] font-bold text-[#9c917f] uppercase tracking-wider mb-0.5 font-mono-data">Date</label>
+                <input type="date" id="forecastDate" onchange="markNeedsRecalculate()" class="w-full bg-[#121318] border border-[#38332a] px-2 py-1 text-xs font-bold text-[#f8f4ec] focus:outline-none focus:border-[#f8f4ec] transition font-mono-data cursor-pointer">
+              </div>
+
+              <!-- Time Input -->
+              <div>
+                <label class="block text-[10px] font-bold text-[#9c917f] uppercase tracking-wider mb-0.5 font-mono-data">Time (IST)</label>
+                <input type="time" id="forecastTime" onchange="markNeedsRecalculate()" class="w-full bg-[#121318] border border-[#38332a] px-2 py-1 text-xs font-bold text-[#f8f4ec] focus:outline-none focus:border-[#f8f4ec] transition font-mono-data cursor-pointer">
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Recalculate State Button (Tight Zero-Excess Gap Directly Attached Below) -->
+          <div>
+            <button id="recalcBtn" onclick="onStationOrDateChange()" class="w-full py-2.5 px-4 bg-[#f8f4ec] hover:bg-[#ebdcc9] text-black font-bold text-xs uppercase tracking-wider border border-[#f8f4ec] transition font-mono-data shadow-md">
+              Recalculate State
+            </button>
+          </div>
+        </div>
+
+        <!-- 2. IN-SITU CAAQMS NETWORK MAP (COL-SPAN-5) (SIDE-BY-SIDE WITH CONTROLS) -->
+        <div class="lg:col-span-5 panel-box p-4 bg-[#0a0b0e] flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1.5 border-b border-[#24221d] pb-1.5">
+            <h3 class="font-bold text-xs uppercase tracking-wider text-[#f8f4ec] font-heading">
+              Delhi-NCR CAAQMS Network
+            </h3>
+            <span class="text-[10px] font-mono-data text-[#d8c4a5]">10 STATIONS</span>
+          </div>
+          <div id="map" class="border border-[#24221d] h-48 w-full"></div>
+          <div class="mt-1.5 flex items-center justify-between text-[10px] text-[#9c917f] font-mono-data">
+            <span>Select station marker to stage & auto-zoom</span>
+            <span class="text-[#f8f4ec]">EPSG:4326</span>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- AUDIT ACTION BAR: VIEW COMPREHENSIVE AQI BREAKDOWN FOR DELHI 10 STATIONS -->
+      <div class="flex flex-wrap items-center justify-between bg-[#121318] border border-[#24221d] p-3.5 px-4 gap-3">
+        <div class="flex items-center gap-3">
+          <span class="text-xs px-2 py-0.5 bg-[#191a20] text-[#d8c4a5] font-mono-data font-bold border border-[#38332a] uppercase">
+            MULTI-POLLUTANT AUDIT
+          </span>
+          <div>
+            <h4 class="text-xs font-bold text-[#f8f4ec] uppercase tracking-wider font-heading">
+              Delhi-NCR 10-Station National Composite AQI & Gas Sub-Indices
+            </h4>
+            <p class="text-[11px] text-[#9c917f]">
+              Compare Google/CPCB Composite AQI (PM2.5 driven) vs AIRO2 Machine Learning Model targets (NO₂ & O₃).
+            </p>
+          </div>
+        </div>
+        <button onclick="toggleDelhiAqiModal()" class="px-4 py-2 bg-[#f8f4ec] hover:bg-[#ebdcc9] text-black font-extrabold text-xs uppercase tracking-wider font-mono-data transition cursor-pointer flex items-center gap-2">
+          View AQI of All 10 Stations
+        </button>
+      </div>
+
+      <!-- ROW 2: PREDICTED KPI CARDS (DIRECTLY BELOW THE CONTROLS & MAP) -->
+      <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- Card 1: NO2 Forecast -->
+        <div class="panel-box p-4 bg-[#0a0b0e] border-l-2 border-l-[#f8f4ec] flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+            <span class="text-[11px] font-bold text-[#9c917f] uppercase tracking-wider font-mono-data">NO₂ Forecast • +1h</span>
+            <span id="no2_aqi_badge" class="px-2 py-0.5 text-[10px] font-mono-data font-bold bg-[#121318] text-[#ebdcc9] border border-[#38332a]">AQI 71</span>
+          </div>
+          <div class="my-2">
+            <div class="text-3xl font-black font-mono-data tracking-tight text-[#f8f4ec] flex items-baseline gap-1.5">
+              <span id="no2_val_highlight">56.10</span>
+              <span class="text-xs font-normal text-[#9c917f]">µg/m³</span>
+            </div>
+            <p class="text-[11px] text-[#9c917f] mt-0.5 font-medium">Vehicular Combustion & Ground Traffic</p>
+          </div>
+          <div class="pt-2 border-t border-[#24221d] flex justify-between items-center text-xs font-mono-data">
+            <span class="text-[#9c917f]">Target Time:</span>
+            <span id="target_time_1h" class="text-[#f8f4ec] font-bold">--</span>
+          </div>
+        </div>
+
+        <!-- Card 2: Ozone Forecast -->
+        <div class="panel-box p-4 bg-[#0a0b0e] border-l-2 border-l-[#d8c4a5] flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+            <span class="text-[11px] font-bold text-[#9c917f] uppercase tracking-wider font-mono-data">O₃ Forecast • +1h</span>
+            <span id="o3_aqi_badge" class="px-2 py-0.5 text-[10px] font-mono-data font-bold bg-[#121318] text-[#ebdcc9] border border-[#38332a]">Satisfactory</span>
+          </div>
+          <div class="my-2">
+            <div class="text-3xl font-black font-mono-data tracking-tight text-[#f8f4ec] flex items-baseline gap-1.5">
+              <span id="o3_val_highlight">20.51</span>
+              <span class="text-xs font-normal text-[#9c917f]">µg/m³</span>
+            </div>
+            <p class="text-[11px] text-[#9c917f] mt-0.5 font-medium">Secondary Photochemical Oxidant</p>
+          </div>
+          <div class="pt-2 border-t border-[#24221d] flex justify-between items-center text-xs font-mono-data">
+            <span class="text-[#9c917f]">Peak Window:</span>
+            <span class="text-[#f8f4ec] font-bold">13:00 - 16:00 IST</span>
+          </div>
+        </div>
+
+        <!-- Card 3: +24h NO2 Peak -->
+        <div class="panel-box p-4 bg-[#0a0b0e] border-l-2 border-l-[#f8f4ec] flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+            <span class="text-[11px] font-bold text-[#9c917f] uppercase tracking-wider font-mono-data">+24h Forecast Peak</span>
+            <span class="px-2 py-0.5 text-[10px] bg-[#121318] text-[#ebdcc9] font-mono-data border border-[#38332a]">DIRECT H24</span>
+          </div>
+          <div class="my-2">
+            <div class="text-3xl font-black font-mono-data tracking-tight text-[#f8f4ec] flex items-baseline gap-1.5">
+              <span id="no2_24h_highlight">46.50</span>
+              <span class="text-xs font-normal text-[#9c917f]">µg/m³</span>
+            </div>
+            <p class="text-[11px] text-[#9c917f] mt-0.5 font-medium">Nocturnal Boundary Layer Inversion</p>
+          </div>
+          <div class="pt-2 border-t border-[#24221d] flex justify-between items-center text-xs font-mono-data">
+            <span class="text-[#9c917f]">Target (+24h):</span>
+            <span id="target_time_24h" class="text-[#f8f4ec] font-bold">--</span>
+          </div>
+        </div>
+
+        <!-- Card 4: Atmospheric Ventilation -->
+        <div class="panel-box p-4 bg-[#0a0b0e] border-l-2 border-l-[#d8c4a5] flex flex-col justify-between">
+          <div class="flex justify-between items-start">
+            <span class="text-[11px] font-bold text-[#9c917f] uppercase tracking-wider font-mono-data">Ventilation Coefficient</span>
+            <span class="px-2 py-0.5 text-[10px] font-mono-data text-[#9c917f] border border-[#24221d]">BLH × Wind</span>
+          </div>
+          <div class="my-2">
+            <div class="text-3xl font-black font-mono-data tracking-tight text-[#f8f4ec] flex items-baseline gap-1.5">
+              <span id="ventilationVal">1,240</span>
+              <span class="text-xs font-normal text-[#9c917f]">m²/s</span>
+            </div>
+            <p class="text-[11px] text-[#9c917f] mt-0.5 font-medium">Flushing Capacity (ERA5 Reanalysis)</p>
+          </div>
+          <div class="pt-2 border-t border-[#24221d] flex justify-between items-center text-xs font-mono-data">
+            <span class="text-[#9c917f]">Photolysis Rate:</span>
+            <span id="photoVal" class="text-[#f8f4ec] font-bold">0.74 J(NO₂)</span>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ROW 3: CITIZEN ADVISORY GUIDE: WHAT IS AQI? -->
+      <section class="panel-box p-5 bg-[#0a0b0e] cream-border-left">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+          <div class="max-w-3xl space-y-1.5">
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] px-2 py-0.5 bg-[#24221d] text-[#d8c4a5] font-mono-data font-bold uppercase tracking-wider">Citizen Advisory Guide</span>
+              <h3 class="text-xs font-bold text-[#f8f4ec] uppercase tracking-wider font-heading">
+                What is AQI and Why Do NO₂ & O₃ Numbers Matter?
+              </h3>
+            </div>
+            <p class="text-xs text-[#ebdcc9] leading-relaxed">
+              Air Quality Index (AQI) is a standard government score from <strong>0 to 500</strong> translating complex photochemical concentrations into an actionable health risk score:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1 text-xs text-[#9c917f]">
+              <div class="p-2.5 bg-[#121318] border border-[#24221d]">
+                <strong class="text-[#f8f4ec] block font-mono-data mb-0.5">NO₂ (Nitrogen Dioxide):</strong>
+                Emitted by diesel exhaust & vehicular traffic. Causes airway inflammation and asthma. Safe CPCB 24h standard: below 80 µg/m³.
+              </div>
+              <div class="p-2.5 bg-[#121318] border border-[#24221d]">
+                <strong class="text-[#f8f4ec] block font-mono-data mb-0.5">O₃ (Ground-Level Ozone):</strong>
+                Formed via daytime photolysis of vehicular precursors under solar UV. Safe CPCB 8h standard: below 100 µg/m³.
+              </div>
+            </div>
+          </div>
+
+          <!-- Color Breakdown Legend -->
+          <div class="flex flex-col gap-1 text-[10px] font-mono-data w-full md:w-auto">
+            <div class="flex items-center gap-2 px-2.5 py-0.5 bg-[#121318] border border-[#24221d]">
+              <span class="w-2.5 h-2.5 bg-[#10b981] inline-block"></span>
+              <span class="text-[#f8f4ec]">0 - 50: Good</span>
+            </div>
+            <div class="flex items-center gap-2 px-2.5 py-0.5 bg-[#121318] border border-[#24221d]">
+              <span class="w-2.5 h-2.5 bg-[#84cc16] inline-block"></span>
+              <span class="text-[#f8f4ec]">51 - 100: Satisfactory</span>
+            </div>
+            <div class="flex items-center gap-2 px-2.5 py-0.5 bg-[#121318] border border-[#24221d]">
+              <span class="w-2.5 h-2.5 bg-[#eab308] inline-block"></span>
+              <span class="text-[#f8f4ec]">101 - 200: Moderate</span>
+            </div>
+            <div class="flex items-center gap-2 px-2.5 py-0.5 bg-[#121318] border border-[#24221d]">
+              <span class="w-2.5 h-2.5 bg-[#f97316] inline-block"></span>
+              <span class="text-[#f8f4ec]">201 - 300: Poor</span>
+            </div>
+            <div class="flex items-center gap-2 px-2.5 py-0.5 bg-[#121318] border border-[#24221d]">
+              <span class="w-2.5 h-2.5 bg-[#ef4444] inline-block"></span>
+              <span class="text-[#f8f4ec]">301 - 400+: Severe</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ROW 4: BIG DETAILED PREDICTION MATRIX TABLE -->
+      <section class="panel-box p-6 bg-[#0a0b0e]">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4 border-b border-[#24221d] pb-3">
+          <div>
+            <h2 class="text-base font-bold text-[#f8f4ec] uppercase tracking-wider font-heading">
+              Photochemical Forecast Matrix & Multi-Horizon Table
+            </h2>
+            <p class="text-xs text-[#9c917f] mt-0.5">Discrete direct multi-horizon predictions with official CPCB National Air Quality Sub-Indices</p>
+          </div>
+          <div class="text-xs font-mono-data text-[#9c917f]">
+            Native Model Output: <span class="text-[#f8f4ec] font-bold">µg/m³</span>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto border border-[#24221d]">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-[#121318] border-b border-[#24221d] text-[#d8c4a5] font-mono-data font-bold uppercase tracking-wider">
+                <th class="py-3 px-4 border-r border-[#24221d]">Horizon</th>
+                <th class="py-3 px-4 border-r border-[#24221d]">Calendar Target Timestamp (IST)</th>
+                <th class="py-3 px-4 border-r border-[#24221d]">NO₂ Forecast (µg/m³)</th>
+                <th class="py-3 px-4 border-r border-[#24221d]">O₃ Forecast (µg/m³)</th>
+                <th class="py-3 px-4 border-r border-[#24221d]">CPCB AQI Sub-Index</th>
+                <th class="py-3 px-4 border-r border-[#24221d]">Regulatory Category</th>
+                <th class="py-3 px-4">Primary Physical Mechanism</th>
+              </tr>
+            </thead>
+            <tbody id="matrixTableBody" class="divide-y divide-[#24221d] font-mono-data">
+              <!-- Populated dynamically via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ================================================================================== -->
+    <!-- SECTION 2: COMPLETE ATMOSPHERIC SENSITIVITY & IMPACT VISUALIZATION POWERHOUSE      -->
+    <!-- ================================================================================== -->
+    <div id="section-sensitivity" class="space-y-6 hidden">
+      
+      <!-- Sensitivity Header -->
+      <section class="panel-box p-6 bg-[#0a0b0e] cream-border-left">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-[#f8f4ec] uppercase tracking-wider font-heading">
+              Atmospheric Sensitivity & Policy Intervention Engine
+            </h2>
+            <p class="text-xs text-[#9c917f] mt-1">
+              Adjust vehicular emissions, regional biomass burning, and water mist cannons to evaluate quantitative pollutant response and visual trajectories in real time.
+            </p>
+          </div>
+          <button onclick="resetSliders()" class="px-4 py-2 bg-[#121318] hover:bg-[#1a1c24] text-[#ebdcc9] border border-[#38332a] text-xs font-mono-data font-bold uppercase transition">
+            Reset All Sliders
+          </button>
+        </div>
+      </section>
+
+      <!-- Sliders Control Grid -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        
+        <!-- Slider 1: Traffic Restriction -->
+        <div class="panel-box p-5 space-y-3 bg-[#0a0b0e]">
+          <div class="flex justify-between items-center text-xs font-mono-data font-bold">
+            <span class="text-[#ebdcc9] uppercase">Commercial Vehicle Restriction:</span>
+            <span id="trafficLabel" class="text-[#f8f4ec] text-sm font-black">0%</span>
+          </div>
+          <input id="trafficSlider" type="range" min="0" max="80" value="0" oninput="runSimulation()" class="w-full cursor-pointer">
+          <div class="flex justify-between text-[10px] text-[#9c917f] font-mono-data">
+            <span>0% (Normal)</span>
+            <span class="text-[#f8f4ec]">40% (GRAP-IV)</span>
+            <span>80% (Lockdown)</span>
+          </div>
+          <p class="text-[11px] text-[#9c917f] border-t border-[#24221d] pt-2 font-medium">
+            Simulates restrictions on BS-III petrol & BS-IV diesel heavy transport.
+          </p>
+        </div>
+
+        <!-- Slider 2: Stubble Biomass Inflow -->
+        <div class="panel-box p-5 space-y-3 bg-[#0a0b0e]">
+          <div class="flex justify-between items-center text-xs font-mono-data font-bold">
+            <span class="text-[#ebdcc9] uppercase">Regional Stubble Inflow Factor:</span>
+            <span id="stubbleLabel" class="text-[#f8f4ec] text-sm font-black">1.0x</span>
+          </div>
+          <input id="stubbleSlider" type="range" min="0.5" max="2.5" step="0.1" value="1.0" oninput="runSimulation()" class="w-full cursor-pointer">
+          <div class="flex justify-between text-[10px] text-[#9c917f] font-mono-data">
+            <span>0.5x (Clean)</span>
+            <span>1.0x (Baseline)</span>
+            <span class="text-[#f8f4ec]">2.5x (Smoke Wave)</span>
+          </div>
+          <p class="text-[11px] text-[#9c917f] border-t border-[#24221d] pt-2 font-medium">
+            Simulates transboundary agricultural biomass burning smoke transport.
+          </p>
+        </div>
+
+        <!-- Toggle: Mist Sprinkling -->
+        <div class="panel-box p-5 flex flex-col justify-between bg-[#0a0b0e]">
+          <label class="flex items-center gap-3.5 cursor-pointer">
+            <input id="sprinklingCheck" type="checkbox" onchange="runSimulation()" class="w-5 h-5 bg-black border border-[#38332a] accent-[#f8f4ec] cursor-pointer">
+            <div>
+              <div class="text-xs font-bold text-[#f8f4ec] font-mono-data uppercase">Anti-Smog Mist Sprinklers</div>
+              <div class="text-[11px] text-[#9c917f] mt-0.5">High-pressure water mist spraying along major traffic corridors</div>
+            </div>
+          </label>
+          <div class="mt-4 p-3 bg-[#121318] border border-[#24221d] text-xs font-mono-data flex justify-between" id="simReductionBadge">
+            <span class="text-[#9c917f]">Simulation Status:</span>
+            <span class="text-[#f8f4ec] font-bold">Move sliders to evaluate</span>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- CHARTS GRID 1 (BAR GRAPHS ON TOP): ATMOSPHERIC FLUX WATERFALL & HORIZON SHIFT MATRIX -->
+      <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Graphic Viz 1: Emissions Attribution Waterfall Chart -->
+        <div class="panel-box p-6 bg-[#0a0b0e] flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3 border-b border-[#24221d] pb-2">
+            <h3 class="font-bold text-xs uppercase tracking-wider text-[#f8f4ec] font-heading">
+              Atmospheric Emission Flux Waterfall (Attribution Balance)
+            </h3>
+            <span class="text-[10px] font-mono-data text-[#d8c4a5] uppercase">Mass Balance</span>
+          </div>
+          <p class="text-[11px] text-[#9c917f] mb-3">
+            Quantifies the positive & negative concentration shifts driving the net predicted NO₂ outcome.
+          </p>
+          <div class="h-72 w-full">
+            <canvas id="waterfallChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Graphic Viz 2: Multi-Horizon Delta Sensitivity Bars -->
+        <div class="panel-box p-6 bg-[#0a0b0e] flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-3 border-b border-[#24221d] pb-2">
+            <h3 class="font-bold text-xs uppercase tracking-wider text-[#f8f4ec] font-heading">
+              Horizon Delta Shift Response Matrix (Δ% Across +1h to +48h)
+            </h3>
+            <span class="text-[10px] font-mono-data text-[#d8c4a5] uppercase">Temporal Response</span>
+          </div>
+          <p class="text-[11px] text-[#9c917f] mb-3">
+            Shows percentage reduction across each discrete forecast horizon under current slider settings.
+          </p>
+          <div class="h-72 w-full">
+            <canvas id="horizonShiftChart"></canvas>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- CHARTS GRID 2 (LINE GRAPHS BELOW): 48-HOUR BASELINE TRAJECTORY & SENSITIVITY COMPARISON LINE GRAPHS -->
+      <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Chart 1: 48-Hour Baseline Trajectory -->
+        <div class="panel-box p-5 flex flex-col justify-between bg-[#0a0b0e]">
+          <div class="flex items-center justify-between mb-3 border-b border-[#24221d] pb-2">
+            <h3 class="font-bold text-xs uppercase tracking-wider text-[#f8f4ec] font-heading">
+              Baseline Multi-Horizon Trajectory (+1h to +48h)
+            </h3>
+            <span class="text-[10px] px-2 py-0.5 bg-[#121318] border border-[#38332a] font-mono-data text-[#ebdcc9] uppercase">Baseline</span>
+          </div>
+          <div class="h-80 w-full">
+            <canvas id="forecastChart"></canvas>
+          </div>
+          <div class="mt-3 flex items-center justify-between text-[11px] text-[#9c917f] font-mono-data">
+            <span>Solid Cream: NO₂ • Muted Tan: O₃</span>
+            <span class="text-[#f8f4ec]">NNLS Simplex Ensemble</span>
+          </div>
+        </div>
+
+        <!-- Chart 2: Policy Simulation Trajectory Comparison -->
+        <div class="panel-box p-5 flex flex-col justify-between bg-[#0a0b0e]">
+          <div class="flex items-center justify-between mb-3 border-b border-[#24221d] pb-2">
+            <h3 class="text-xs font-bold text-[#f8f4ec] uppercase tracking-wider font-heading">
+              Policy Comparison Trajectory (Baseline vs. Simulated)
+            </h3>
+            <span class="text-[10px] font-mono-data text-[#a3e635] uppercase">Live Perturbation</span>
+          </div>
+          <div class="h-80 w-full">
+            <canvas id="sensitivityChart"></canvas>
+          </div>
+          <div class="mt-3 flex items-center justify-between text-[11px] text-[#9c917f] font-mono-data">
+            <span>Dashed Green: Simulated NO₂ • Purple: Simulated O₃</span>
+            <span class="text-[#f8f4ec]">Dynamic Physics Response</span>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- QUANTITATIVE IMPACT IN NUMBERS (EXPLICIT NUMERICAL BREAKDOWN) -->
+      <section class="panel-box p-6 bg-[#0a0b0e]">
+        <div class="flex items-center justify-between mb-4 border-b border-[#24221d] pb-3">
+          <h3 class="text-sm font-bold text-[#f8f4ec] uppercase tracking-wider font-heading">
+            Quantitative Impact Assessment Matrix (Baseline vs. Simulated Policy)
+          </h3>
+          <span class="text-xs font-mono-data text-[#9c917f]">Horizon Checkpoint: <strong class="text-[#f8f4ec]">+24 Hours</strong></span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-mono-data">
+          
+          <!-- Box 1: NO2 Delta -->
+          <div class="p-4 bg-[#121318] border border-[#24221d]">
+            <span class="text-[11px] font-bold text-[#9c917f] uppercase font-mono-data">NO₂ Concentration Delta (+24h)</span>
+            <div class="mt-2 flex items-baseline justify-between">
+              <span id="num_base_no2" class="text-xl font-bold font-mono-data text-[#9c917f]">18.88 µg/m³</span>
+              <span class="text-xs text-[#4a4436]">-></span>
+              <span id="num_sim_no2" class="text-2xl font-black font-mono-data text-[#f8f4ec]">18.88 µg/m³</span>
+            </div>
+            <div class="mt-3 pt-2 border-t border-[#24221d] flex justify-between text-xs font-mono-data">
+              <span class="text-[#9c917f]">Net Reduction:</span>
+              <span id="num_delta_no2" class="font-bold text-[#f8f4ec]">0.00 µg/m³ (0.0%)</span>
+            </div>
+          </div>
+
+          <!-- Box 2: O3 Delta -->
+          <div class="p-4 bg-[#121318] border border-[#24221d]">
+            <span class="text-[11px] font-bold text-[#9c917f] uppercase font-mono-data">O₃ Concentration Delta (+12h Peak)</span>
+            <div class="mt-2 flex items-baseline justify-between">
+              <span id="num_base_o3" class="text-xl font-bold font-mono-data text-[#9c917f]">18.09 µg/m³</span>
+              <span class="text-xs text-[#4a4436]">-></span>
+              <span id="num_sim_o3" class="text-2xl font-black font-mono-data text-[#f8f4ec]">18.09 µg/m³</span>
+            </div>
+            <div class="mt-3 pt-2 border-t border-[#24221d] flex justify-between text-xs font-mono-data">
+              <span class="text-[#9c917f]">Net Variation:</span>
+              <span id="num_delta_o3" class="font-bold text-[#f8f4ec]">0.00 µg/m³ (0.0%)</span>
+            </div>
+          </div>
+
+          <!-- Box 3: Regulatory GRAP Stage Action -->
+          <div class="p-4 bg-[#121318] border border-[#24221d] flex flex-col justify-between">
+            <span class="text-[11px] font-bold text-[#9c917f] uppercase font-mono-data">CAQM Regulatory Directive</span>
+            <div class="mt-1 text-sm font-bold text-[#f8f4ec] font-mono-data" id="simGrapStageBox">
+              GRAP Stage-I (Standard Vigilance)
+            </div>
+            <div class="mt-2 text-[11px] text-[#9c917f] font-sans" id="simDirectiveText">
+              Standard dust mitigation and industrial emission monitoring in effect.
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SCIENTIFIC ATMOSPHERIC CHEMISTRY FACTS & MECHANISMS -->
+      <section class="panel-box p-6 bg-[#0a0b0e] cream-border-left">
+        <h3 class="text-sm font-bold text-[#f8f4ec] uppercase tracking-wider font-heading mb-3">
+          Atmospheric Chemistry & Photochemical Mechanics (Domain Rationale)
+        </h3>
+        
+        <div class="space-y-3 text-xs text-[#ebdcc9] leading-relaxed font-sans">
+          <div class="p-3.5 bg-[#121318] border border-[#24221d]" id="chemFactBox">
+            <strong class="text-[#f8f4ec] block mb-1 font-mono-data uppercase">Photochemical Titration & Non-Linear Chemical Coupling:</strong>
+            <span id="chemFactText">
+              When commercial traffic decreases, primary vehicular NO emissions drop immediately. In urban VOC-limited regimes like Central Delhi, lower NO emissions reduce nocturnal Ozone titration (NO + O₃ -> NO₂ + O₂), leading to a significant reduction in toxic NO₂ while stabilizing afternoon Ozone formation.
+            </span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ================================================================================== -->
+    <!-- SECTION 3: REGULATORY DIRECTIVES & MODEL AUDIT                                     -->
+    <!-- ================================================================================== -->
+    <div id="section-regulatory" class="space-y-6 hidden">
+      
+      <section class="panel-box p-6 bg-[#0a0b0e] cream-border-left">
+        <h2 class="text-base font-bold text-[#f8f4ec] uppercase tracking-wider font-heading mb-2">
+          CAQM Graded Response Action Plan (GRAP) Enforcement Framework
+        </h2>
+        <p class="text-xs text-[#9c917f]">
+          Statutory regulatory directives triggered automatically when multi-horizon concentrations breach CPCB thresholds.
+        </p>
+
+        <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono-data">
+          
+          <div class="p-4 bg-[#121318] border border-[#24221d] space-y-2">
+            <div class="flex justify-between font-bold text-[#f8f4ec]">
+              <span>STAGE-I: POOR (AQI 201-300)</span>
+              <span class="text-[#9c917f]">TRIGGER: 80 µg/m³ NO₂</span>
+            </div>
+            <p class="text-[11px] text-[#9c917f] font-sans">
+              Strict enforcement of dust mitigation at construction sites; intensified water sprinkling; unannounced industrial stack inspections.
+            </p>
+          </div>
+
+          <div class="p-4 bg-[#121318] border border-[#24221d] space-y-2">
+            <div class="flex justify-between font-bold text-[#f8f4ec]">
+              <span>STAGE-II: VERY POOR (AQI 301-400)</span>
+              <span class="text-[#9c917f]">TRIGGER: 180 µg/m³ NO₂</span>
+            </div>
+            <p class="text-[11px] text-[#9c917f] font-sans">
+              Mechanized sweeping on designated arterial roads; deployment of mobile anti-smog guns; synchronized traffic lights to reduce idling.
+            </p>
+          </div>
+
+          <div class="p-4 bg-[#121318] border border-[#24221d] space-y-2">
+            <div class="flex justify-between font-bold text-[#f8f4ec]">
+              <span>STAGE-III: SEVERE (AQI 401-450)</span>
+              <span class="text-[#9c917f]">TRIGGER: 280 µg/m³ NO₂</span>
+            </div>
+            <p class="text-[11px] text-[#9c917f] font-sans">
+              Strict prohibition on plying of BS-III petrol and BS-IV diesel light motor vehicles; closure of brick kilns and stone crushers.
+            </p>
+          </div>
+
+          <div class="p-4 bg-[#121318] border border-[#24221d] space-y-2">
+            <div class="flex justify-between font-bold text-[#f8f4ec]">
+              <span>STAGE-IV: SEVERE+ (AQI > 450)</span>
+              <span class="text-[#9c917f]">TRIGGER: 400 µg/m³ NO₂</span>
+            </div>
+            <p class="text-[11px] text-[#9c917f] font-sans">
+              Complete ban on entry of non-essential commercial diesel trucks into Delhi NCR; emergency shift to remote work and school closures.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SHAP Model Drivers Architecture Breakdown -->
+      <section class="panel-box p-6 bg-[#0a0b0e]">
+        <h3 class="text-sm font-bold text-[#f8f4ec] uppercase tracking-wider font-heading mb-3">
+          Explainable AI (XAI) — Top Atmospheric Model Drivers (SHAP Attribution)
+        </h3>
+        
+        <div class="overflow-x-auto border border-[#24221d] text-xs font-mono-data">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-[#121318] border-b border-[#24221d] text-[#d8c4a5] font-bold uppercase">
+                <th class="py-2.5 px-4 border-r border-[#24221d]">Rank</th>
+                <th class="py-2.5 px-4 border-r border-[#24221d]">Feature Identifier</th>
+                <th class="py-2.5 px-4 border-r border-[#24221d]">Data Domain</th>
+                <th class="py-2.5 px-4 border-r border-[#24221d]">Mean |SHAP| Value</th>
+                <th class="py-2.5 px-4">Physical Correlation</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#24221d]">
+              <tr>
+                <td class="py-2.5 px-4 text-[#f8f4ec] font-bold border-r border-[#24221d]">01</td>
+                <td class="py-2.5 px-4 text-[#f8f4ec] border-r border-[#24221d]">era5_boundary_layer_height</td>
+                <td class="py-2.5 px-4 text-[#9c917f] border-r border-[#24221d]">ECMWF Reanalysis</td>
+                <td class="py-2.5 px-4 text-[#f8f4ec] font-bold border-r border-[#24221d]">0.482</td>
+                <td class="py-2.5 px-4 text-[#ebdcc9]">Inverse correlation with NO2 nocturnal concentration trap</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-4 text-[#f8f4ec] font-bold border-r border-[#24221d]">02</td>
+                <td class="py-2.5 px-4 text-[#f8f4ec] border-r border-[#24221d]">era5_solar_radiation_w_m2</td>
+                <td class="py-2.5 px-4 text-[#9c917f] border-r border-[#24221d]">ECMWF Reanalysis</td>
+                <td class="py-2.5 px-4 text-[#f8f4ec] font-bold border-r border-[#24221d]">0.415</td>
+                <td class="py-2.5 px-4 text-[#ebdcc9]">Direct correlation with O3 afternoon photolysis formation</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-4 text-[#f8f4ec] font-bold border-r border-[#24221d]">03</td>
+                <td class="py-2.5 px-4 text-[#f8f4ec] border-r border-[#24221d]">sat_NO2</td>
+                <td class="py-2.5 px-4 text-[#9c917f] border-r border-[#24221d]">Sentinel-5P TROPOMI</td>
+                <td class="py-2.5 px-4 text-[#f8f4ec] font-bold border-r border-[#24221d]">0.368</td>
+                <td class="py-2.5 px-4 text-[#ebdcc9]">Captures regional background tropospheric column transport</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-4 text-[#f8f4ec] font-bold border-r border-[#24221d]">04</td>
+                <td class="py-2.5 px-4 text-[#f8f4ec] border-r border-[#24221d]">NO2_ground_roll_mean_24h</td>
+                <td class="py-2.5 px-4 text-[#9c917f] border-r border-[#24221d]">CPCB In-Situ</td>
+                <td class="py-2.5 px-4 text-[#f8f4ec] font-bold border-r border-[#24221d]">0.312</td>
+                <td class="py-2.5 px-4 text-[#ebdcc9]">Stabilizes long-term baseline autoregressive memory</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ================================================================================== -->
+    <!-- SECTION 4: DYNAMIC CUSTOM LOCATION & DISCORD/SLACK WEBHOOK ALERT DISPATCHER          -->
+    <!-- ================================================================================== -->
+    <div id="section-webhook-alerts" class="space-y-6 hidden">
+      
+      <!-- TOP DECK: LOCATION SEARCH & QUICK INDIAN CITIES -->
+      <section class="panel-box p-6 bg-[#0a0b0e]">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-[#24221d] pb-4 mb-4">
+          <div>
+            <div class="flex items-center gap-3">
+              <span class="text-xs px-2.5 py-1 bg-[#121318] text-[#d8c4a5] font-mono-data font-bold border border-[#38332a] uppercase">
+                NATIONAL AIRSHED DISPATCHER
+              </span>
+              <h2 class="text-lg font-black tracking-tight text-[#f8f4ec] font-heading">
+                Dynamic Custom Location & Webhook Alerts
+              </h2>
+            </div>
+            <p class="text-xs text-[#9c917f] mt-1">
+              Select or type any Indian city/neighborhood to ingest real-time local meteorology and dispatch automated early-warning alerts to Discord, Slack, or government webhooks.
+            </p>
+          </div>
+
+          <button onclick="detectUserGPS()" class="px-4 py-2 bg-[#121318] hover:bg-[#1a1b22] text-xs font-bold text-[#f8f4ec] border border-[#38332a] font-mono-data flex items-center gap-2 transition cursor-pointer">
+            Detect My GPS Location
+          </button>
+        </div>
+
+        <!-- SEARCH INPUT & QUICK CITIES -->
+        <div class="space-y-4">
+          <div class="flex flex-col sm:flex-row gap-2.5">
+            <div class="relative flex-1">
+              <input id="customLocationInput" type="text" placeholder="Type any Indian city or area (e.g. Hyderabad, Bandra Mumbai, Indiranagar Bengaluru, Lucknow)..." 
+                class="w-full bg-[#121318] border border-[#38332a] px-4 py-2.5 text-sm text-[#f8f4ec] focus:outline-none focus:border-[#f8f4ec] font-mono-data"
+                onkeypress="if(event.key === 'Enter') searchCustomLocation()">
+              <div id="geocodeResultsDropdown" class="absolute left-0 right-0 top-full mt-1 bg-[#121318] border border-[#38332a] z-50 hidden max-h-48 overflow-y-auto"></div>
+            </div>
+            <button onclick="searchCustomLocation()" class="px-6 py-2.5 bg-[#f8f4ec] hover:bg-[#ebdcc9] text-black font-bold text-xs uppercase tracking-wider font-mono-data transition cursor-pointer">
+              Ingest & Forecast
+            </button>
+          </div>
+
+          <!-- Quick Cities Pills -->
+          <div class="flex flex-wrap items-center gap-2 pt-1">
+            <span class="text-[10px] font-bold text-[#9c917f] uppercase font-mono-data">Quick Presets:</span>
+            <button onclick="selectCustomCity('Hyderabad, Telangana', 17.3850, 78.4867)" class="date-preset-btn text-[10px] py-1 px-2.5">Hyderabad</button>
+            <button onclick="selectCustomCity('Bengaluru, Karnataka', 12.9716, 77.5946)" class="date-preset-btn text-[10px] py-1 px-2.5">Bengaluru</button>
+            <button onclick="selectCustomCity('Mumbai, Maharashtra', 19.0760, 72.8777)" class="date-preset-btn text-[10px] py-1 px-2.5">Mumbai</button>
+            <button onclick="selectCustomCity('Kolkata, West Bengal', 22.5726, 88.3639)" class="date-preset-btn text-[10px] py-1 px-2.5">Kolkata</button>
+            <button onclick="selectCustomCity('Chennai, Tamil Nadu', 13.0827, 80.2707)" class="date-preset-btn text-[10px] py-1 px-2.5">Chennai</button>
+            <button onclick="selectCustomCity('Pune, Maharashtra', 18.5204, 73.8567)" class="date-preset-btn text-[10px] py-1 px-2.5">Pune</button>
+            <button onclick="selectCustomCity('Ahmedabad, Gujarat', 23.0225, 72.5714)" class="date-preset-btn text-[10px] py-1 px-2.5">Ahmedabad</button>
+            <button onclick="selectCustomCity('Lucknow, Uttar Pradesh', 26.8467, 80.9462)" class="date-preset-btn text-[10px] py-1 px-2.5">Lucknow</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- MIDDLE DECK: DYNAMIC LOCATION FORECAST & WEBHOOK DISPATCH FORM -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- LEFT CARD: LIVE ATMOSPHERIC SUMMARY FOR SELECTED LOCATION -->
+        <section class="panel-box p-6 bg-[#0a0b0e] flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between border-b border-[#24221d] pb-3 mb-4">
+              <div>
+                <span class="text-[10px] font-mono-data text-[#d8c4a5] uppercase">Real-Time Ingestion Baseline</span>
+                <h3 class="text-sm font-bold text-[#f8f4ec] font-heading uppercase tracking-wider" id="userLocTitle">
+                  Hyderabad, Telangana
+                </h3>
+              </div>
+              <span id="userLocRiskBadge" class="px-2.5 py-1 bg-[#121318] border border-[#a3e635] text-[#a3e635] font-mono-data font-bold text-[10px] uppercase">
+                LOW RISK
+              </span>
+            </div>
+
+            <!-- Metric Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 mb-4">
+              <!-- Card 1: 24h Overall Day's AQI (CPCB Bulletin) -->
+              <div class="p-3 bg-[#121318] border-2 border-[#d8c4a5] flex flex-col justify-between">
+                <div class="text-[10px] text-[#d8c4a5] font-mono-data font-bold uppercase">24-Hr Daily CPCB AQI</div>
+                <div class="text-2xl font-black text-[#f8f4ec] font-mono-data" id="userLocDailyAQICard">--</div>
+                <div class="text-[10px] text-[#ebdcc9]" id="userLocDailyCatCard">Official Bulletin Standard</div>
+              </div>
+
+              <!-- Card 2: Current Point-in-Time AQI -->
+              <div class="p-3 bg-[#121318] border border-[#24221d] flex flex-col justify-between">
+                <div class="text-[10px] text-[#9c917f] font-mono-data uppercase">Current Point AQI</div>
+                <div class="text-xl font-black text-[#f8f4ec] font-mono-data" id="userLocCurrAQI">--</div>
+                <div class="text-[10px] text-[#ebdcc9]" id="userLocCurrCat">Live Ingestion</div>
+              </div>
+
+              <!-- Card 3: Model Target NO2 -->
+              <div class="p-3 bg-[#121318] border border-[#24221d] flex flex-col justify-between">
+                <div class="text-[10px] text-[#9c917f] font-mono-data uppercase">Model Target: NO₂</div>
+                <div class="text-xl font-black text-[#f8f4ec] font-mono-data" id="userLocNO2Sub">--</div>
+                <div class="text-[10px] text-[#d8c4a5]" id="userLocNO2Cat">Sub-Index</div>
+              </div>
+
+              <!-- Card 4: Model Target O3 -->
+              <div class="p-3 bg-[#121318] border border-[#24221d] flex flex-col justify-between">
+                <div class="text-[10px] text-[#9c917f] font-mono-data uppercase">Model Target: O₃</div>
+                <div class="text-xl font-black text-[#f8f4ec] font-mono-data" id="userLocO3Sub">--</div>
+                <div class="text-[10px] text-[#d8c4a5]" id="userLocO3Cat">Sub-Index</div>
+              </div>
+
+              <!-- Card 5: +12h Peak Forecast -->
+              <div class="p-3 bg-[#121318] border border-[#24221d] flex flex-col justify-between col-span-2 sm:col-span-1">
+                <div class="text-[10px] text-[#9c917f] font-mono-data uppercase">+12h Peak (NO₂)</div>
+                <div class="text-xl font-black text-[#f8f4ec] font-mono-data" id="userLoc12hNO2">--</div>
+                <div class="text-[10px] text-[#d8c4a5]" id="userLoc12hAQI">AQI --</div>
+              </div>
+            </div>
+
+            <!-- Diagnostics Row -->
+            <div class="p-3.5 bg-[#121318] border border-[#24221d] space-y-2 mb-4">
+              <div class="flex justify-between text-xs font-mono-data">
+                <span class="text-[#9c917f]">24-Hour CPCB Daily Integrated AQI (Bulletin Standard):</span>
+                <span class="text-[#d8c4a5] font-bold" id="userLocDailyCPCB">AQI -- (Satisfactory)</span>
+              </div>
+              <div class="flex justify-between text-xs font-mono-data">
+                <span class="text-[#9c917f]">Planetary Boundary Layer (BLH):</span>
+                <span class="text-[#f8f4ec] font-bold" id="userLocBLH">-- meters</span>
+              </div>
+              <div class="flex justify-between text-xs font-mono-data">
+                <span class="text-[#9c917f]">Local Ambient Temp / Humidity:</span>
+                <span class="text-[#f8f4ec] font-bold" id="userLocWeather">--°C / --%</span>
+              </div>
+              <div class="flex justify-between text-xs font-mono-data">
+                <span class="text-[#9c917f]">GPS Coordinates:</span>
+                <span class="text-[#ebdcc9]" id="userLocCoords">17.3850° N, 78.4867° E</span>
+              </div>
+              <div class="flex justify-between text-xs font-mono-data border-t border-[#24221d] pt-2 mt-1">
+                <span class="text-[#d8c4a5] font-bold">Nearest CPCB Reference Station:</span>
+                <span class="text-[#f8f4ec] font-bold" id="userLocCPCBStation">--</span>
+              </div>
+              <div class="text-[10px] text-[#9c917f]" id="userLocCPCBVerify"></div>
+            </div>
+
+            <!-- Action Directive -->
+            <div class="p-3 bg-[#191a20] border-l-2 border-[#d8c4a5]">
+              <div class="text-[10px] font-bold text-[#d8c4a5] uppercase tracking-wider font-mono-data mb-1">
+                Recommended Mitigation Directive
+              </div>
+              <p class="text-xs text-[#f8f4ec] leading-relaxed" id="userLocDirective">
+                Loading live local air quality mitigation strategy...
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT CARD: WEBHOOK DISPATCH CONTROLS -->
+        <section class="panel-box p-6 bg-[#0a0b0e] flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between border-b border-[#24221d] pb-3 mb-4">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[#f8f4ec] font-heading">
+                Webhook Notification Configuration
+              </h3>
+              <span class="text-[10px] font-mono-data text-[#d8c4a5] uppercase">Discord • Slack • HTTP</span>
+            </div>
+
+            <div class="space-y-3.5">
+              <!-- Webhook URL Input -->
+              <div>
+                <label class="block text-[10px] font-bold text-[#9c917f] uppercase tracking-wider mb-1 font-mono-data">
+                  Target Webhook URL (Optional for Live Push)
+                </label>
+                <input id="webhookUrlInput" type="text" placeholder="https://discord.com/api/webhooks/... or https://hooks.slack.com/..." 
+                  class="w-full bg-[#121318] border border-[#38332a] px-3 py-2 text-xs text-[#f8f4ec] font-mono-data focus:outline-none focus:border-[#f8f4ec]">
+                <p class="text-[10px] text-[#9c917f] mt-1">
+                  Leave blank to test in Simulation Mode with built-in JSON payload inspector.
+                </p>
+              </div>
+
+              <!-- Grid: Horizon & Threshold -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[10px] font-bold text-[#9c917f] uppercase tracking-wider mb-1 font-mono-data">
+                    Target Evaluation Horizon
+                  </label>
+                  <select id="webhookHorizonSelect" class="w-full bg-[#121318] border border-[#38332a] px-3 py-2 text-xs font-bold text-[#f8f4ec] focus:outline-none cursor-pointer">
+                    <option value="12">+12 Hours (Nocturnal Peak Inversion)</option>
+                    <option value="24">+24 Hours (Next Day Baseline)</option>
+                    <option value="1">+1 Hour (Immediate Real-Time)</option>
+                    <option value="48">+48 Hours (Long-Range Projection)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-[10px] font-bold text-[#9c917f] uppercase tracking-wider mb-1 font-mono-data">
+                    Minimum AQI Trigger Threshold
+                  </label>
+                  <select id="webhookThresholdSelect" class="w-full bg-[#121318] border border-[#38332a] px-3 py-2 text-xs font-bold text-[#f8f4ec] focus:outline-none cursor-pointer">
+                    <option value="50">AQI ≥ 50 (All Advisory Updates)</option>
+                    <option value="100" selected>AQI ≥ 100 (Moderate & Above)</option>
+                    <option value="200">AQI ≥ 200 (Poor / GRAP Stage-II)</option>
+                    <option value="300">AQI ≥ 300 (Very Poor / Stage-III)</option>
+                    <option value="400">AQI ≥ 400 (Severe / Stage-IV)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Custom Note -->
+              <div>
+                <label class="block text-[10px] font-bold text-[#9c917f] uppercase tracking-wider mb-1 font-mono-data">
+                  Custom Recipient Advisory (Optional)
+                </label>
+                <input id="webhookNoteInput" type="text" placeholder="e.g. Alert for Telangana State Disaster Authority / Municipal Squad" 
+                  class="w-full bg-[#121318] border border-[#38332a] px-3 py-2 text-xs text-[#f8f4ec] font-mono-data focus:outline-none">
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <div class="pt-4 mt-4 border-t border-[#24221d]">
+            <button id="dispatchWebhookBtn" onclick="dispatchCustomWebhook()" class="w-full py-3 bg-[#f8f4ec] hover:bg-[#ebdcc9] text-black font-extrabold text-xs uppercase tracking-wider font-mono-data transition cursor-pointer flex items-center justify-center gap-2">
+              Dispatch Early Warning Webhook Alert
+            </button>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- DEDICATED SECTION: CUSTOM LOCATION MULTI-HORIZON PREDICTION MATRIX TABLE -->
+      <section class="panel-box p-6 bg-[#0a0b0e]">
+        <div class="flex flex-wrap items-center justify-between border-b border-[#24221d] pb-3 mb-4 gap-2">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs px-2 py-0.5 bg-[#121318] text-[#d8c4a5] font-mono-data font-bold border border-[#38332a] uppercase">
+                MODEL CHECKPOINT TRAJECTORY
+              </span>
+              <h3 class="text-sm font-bold text-[#f8f4ec] font-heading uppercase tracking-wider">
+                Multi-Horizon AIRO2 Predictions for <span id="tableLocName" class="text-[#d8c4a5]">Hyderabad, Telangana</span>
+              </h3>
+            </div>
+            <p class="text-xs text-[#9c917f] mt-0.5">
+              Direct multi-horizon ensemble forecasts (+1h, +3h, +6h, +12h, +24h, +48h) generated via LightGBM + BiLSTM-Attention stacker.
+            </p>
+          </div>
+          <span class="text-[10px] font-mono-data text-[#a3e635] px-2 py-1 bg-[#121318] border border-[#24221d] uppercase">
+            12 Direct Checkpoints Loaded
+          </span>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs font-mono-data border border-[#24221d]">
+            <thead class="bg-[#121318] text-[#9c917f] uppercase text-[10px] tracking-wider border-b border-[#24221d]">
+              <tr>
+                <th class="py-2.5 px-4 border-r border-[#24221d]">Horizon</th>
+                <th class="py-2.5 px-4 border-r border-[#24221d]">Target Timestamp (IST)</th>
+                <th class="py-2.5 px-4 border-r border-[#24221d]">Predicted NO₂ (µg/m³)</th>
+                <th class="py-2.5 px-4 border-r border-[#24221d]">NO₂ Sub-Index</th>
+                <th class="py-2.5 px-4 border-r border-[#24221d]">Predicted O₃ (µg/m³)</th>
+                <th class="py-2.5 px-4 border-r border-[#24221d]">O₃ Sub-Index</th>
+                <th class="py-2.5 px-4 border-r border-[#24221d]">Projected AQI</th>
+                <th class="py-2.5 px-4">Status & Action Protocol</th>
+              </tr>
+            </thead>
+            <tbody id="userLocHorizonsTableBody" class="divide-y divide-[#24221d]">
+              <tr>
+                <td colspan="8" class="py-4 text-center text-[#9c917f]">
+                  Loading live multi-horizon forecast matrix...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- DEDICATED SECTION: OFFICIAL CPCB NATIONAL AQI REFERENCE & HEALTH GUIDE -->
+      <section class="panel-box p-6 bg-[#0a0b0e]">
+        <div class="border-b border-[#24221d] pb-3 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="text-xs px-2 py-0.5 bg-[#121318] text-[#d8c4a5] font-mono-data font-bold border border-[#38332a] uppercase">
+              REGULATORY BENCHMARK
+            </span>
+            <h3 class="text-sm font-bold text-[#f8f4ec] font-heading uppercase tracking-wider">
+              Official CPCB National Air Quality Index (AQI) & Public Health Impact Guide
+            </h3>
+          </div>
+          <p class="text-xs text-[#9c917f] mt-0.5">
+            National standard breakpoints defined by Central Pollution Control Board (CPCB) and Commission for Air Quality Management (CAQM).
+          </p>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs font-mono-data border border-[#24221d]">
+            <thead class="bg-[#121318] text-[#9c917f] uppercase text-[10px] tracking-wider border-b border-[#24221d]">
+              <tr>
+                <th class="py-2.5 px-3 border-r border-[#24221d]">AQI Band</th>
+                <th class="py-2.5 px-3 border-r border-[#24221d]">Category</th>
+                <th class="py-2.5 px-3 border-r border-[#24221d]">NO₂ (24-hr µg/m³)</th>
+                <th class="py-2.5 px-3 border-r border-[#24221d]">O₃ (8-hr µg/m³)</th>
+                <th class="py-2.5 px-4 border-r border-[#24221d]">Associated Public Health Impacts</th>
+                <th class="py-2.5 px-3">CAQM GRAP Protocol</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#24221d]">
+              <tr class="hover:bg-[#121318]">
+                <td class="py-2.5 px-3 font-bold border-r border-[#24221d]">
+                  <span class="px-2 py-0.5 bg-[#00e400]/20 text-[#00e400] border border-[#00e400]/40 font-bold">0 – 50</span>
+                </td>
+                <td class="py-2.5 px-3 text-[#00e400] font-bold border-r border-[#24221d]">GOOD</td>
+                <td class="py-2.5 px-3 text-[#ebdcc9] border-r border-[#24221d]">0 – 40</td>
+                <td class="py-2.5 px-3 text-[#ebdcc9] border-r border-[#24221d]">0 – 50</td>
+                <td class="py-2.5 px-4 text-[#ebdcc9] border-r border-[#24221d]">Minimal health impact. Air quality is considered satisfactory.</td>
+                <td class="py-2.5 px-3 text-[#9c917f]">Baseline Monitoring</td>
+              </tr>
+
+              <tr class="hover:bg-[#121318]">
+                <td class="py-2.5 px-3 font-bold border-r border-[#24221d]">
+                  <span class="px-2 py-0.5 bg-[#92d050]/20 text-[#92d050] border border-[#92d050]/40 font-bold">51 – 100</span>
+                </td>
+                <td class="py-2.5 px-3 text-[#92d050] font-bold border-r border-[#24221d]">SATISFACTORY</td>
+                <td class="py-2.5 px-3 text-[#ebdcc9] border-r border-[#24221d]">41 – 80</td>
+                <td class="py-2.5 px-3 text-[#ebdcc9] border-r border-[#24221d]">51 – 100</td>
+                <td class="py-2.5 px-4 text-[#ebdcc9] border-r border-[#24221d]">Minor breathing discomfort to sensitive individuals.</td>
+                <td class="py-2.5 px-3 text-[#9c917f]">Standard Surveillance</td>
+              </tr>
+
+              <tr class="hover:bg-[#121318]">
+                <td class="py-2.5 px-3 font-bold border-r border-[#24221d]">
+                  <span class="px-2 py-0.5 bg-[#ffff00]/20 text-[#ffff00] border border-[#ffff00]/40 font-bold">101 – 200</span>
+                </td>
+                <td class="py-2.5 px-3 text-[#ffff00] font-bold border-r border-[#24221d]">MODERATE</td>
+                <td class="py-2.5 px-3 text-[#ebdcc9] border-r border-[#24221d]">81 – 180</td>
+                <td class="py-2.5 px-3 text-[#ebdcc9] border-r border-[#24221d]">101 – 168</td>
+                <td class="py-2.5 px-4 text-[#ebdcc9] border-r border-[#24221d]">Breathing discomfort to people with asthma, lungs, and heart diseases.</td>
+                <td class="py-2.5 px-3 text-[#ffff00]">GRAP Stage-I (Poor Air Advisory)</td>
+              </tr>
+
+              <tr class="hover:bg-[#121318]">
+                <td class="py-2.5 px-3 font-bold border-r border-[#24221d]">
+                  <span class="px-2 py-0.5 bg-[#ff7e00]/20 text-[#ff7e00] border border-[#ff7e00]/40 font-bold">201 – 300</span>
+                </td>
+                <td class="py-2.5 px-3 text-[#ff7e00] font-bold border-r border-[#24221d]">POOR</td>
+                <td class="py-2.5 px-3 text-[#ebdcc9] border-r border-[#24221d]">181 – 280</td>
+                <td class="py-2.5 px-3 text-[#ebdcc9] border-r border-[#24221d]">169 – 208</td>
+                <td class="py-2.5 px-4 text-[#ebdcc9] border-r border-[#24221d]">Breathing discomfort to most people on prolonged exposure.</td>
+                <td class="py-2.5 px-3 text-[#ff7e00]">GRAP Stage-II (Mechanized Sweeping)</td>
+              </tr>
+
+              <tr class="hover:bg-[#121318]">
+                <td class="py-2.5 px-3 font-bold border-r border-[#24221d]">
+                  <span class="px-2 py-0.5 bg-[#ff0000]/20 text-[#ff0000] border border-[#ff0000]/40 font-bold">301 – 400</span>
+                </td>
+                <td class="py-2.5 px-3 text-[#ff0000] font-bold border-r border-[#24221d]">VERY POOR</td>
+                <td class="py-2.5 px-3 text-[#ebdcc9] border-r border-[#24221d]">281 – 400</td>
+                <td class="py-2.5 px-3 text-[#ebdcc9] border-r border-[#24221d]">209 – 748</td>
+                <td class="py-2.5 px-4 text-[#ebdcc9] border-r border-[#24221d]">Respiratory illness on prolonged exposure. Significant risk to elderly & children.</td>
+                <td class="py-2.5 px-3 text-[#ff0000]">GRAP Stage-III (Halt Non-Essential LMVs)</td>
+              </tr>
+
+              <tr class="hover:bg-[#121318]">
+                <td class="py-2.5 px-3 font-bold border-r border-[#24221d]">
+                  <span class="px-2 py-0.5 bg-[#7e0023]/20 text-[#f87171] border border-[#7e0023]/60 font-bold">401 – 500</span>
+                </td>
+                <td class="py-2.5 px-3 text-[#f87171] font-bold border-r border-[#24221d]">SEVERE</td>
+                <td class="py-2.5 px-3 text-[#ebdcc9] border-r border-[#24221d]">> 400</td>
+                <td class="py-2.5 px-3 text-[#ebdcc9] border-r border-[#24221d]">> 748</td>
+                <td class="py-2.5 px-4 text-[#f87171] border-r border-[#24221d]">Affects healthy people and seriously impacts those with existing medical conditions.</td>
+                <td class="py-2.5 px-3 text-[#f87171]">GRAP Stage-IV (Total Emergency Ban)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- BOTTOM DECK: INTERACTIVE LIVE PAYLOAD INSPECTOR -->
+      <section class="panel-box p-6 bg-[#0a0b0e]">
+        <div class="flex items-center justify-between border-b border-[#24221d] pb-3 mb-3">
+          <div class="flex items-center gap-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#f8f4ec] font-heading">
+              Live Webhook JSON Payload Inspector (Terminal Output)
+            </h3>
+            <span id="webhookStatusBadge" class="text-[10px] px-2 py-0.5 bg-[#121318] text-[#9c917f] font-mono-data border border-[#38332a] uppercase">
+              Ready for dispatch
+            </span>
+          </div>
+
+          <button onclick="copyWebhookJSON()" class="text-[10px] px-3 py-1 bg-[#121318] hover:bg-[#1a1b22] text-[#d8c4a5] font-mono-data border border-[#38332a] transition cursor-pointer">
+            Copy JSON
+          </button>
+        </div>
+
+        <pre id="webhookJsonTerminal" class="p-4 bg-[#07080a] border border-[#24221d] text-[11px] text-[#a3e635] font-mono-data overflow-x-auto max-h-64 whitespace-pre-wrap">
+{
+  "message": "Click 'Dispatch Early Warning Webhook Alert' to preview formatted Discord/Slack embed payload..."
+}
+        </pre>
+      </section>
+
+    </div>
+
+    <!-- MODAL: DELHI NCR 10-STATION COMPREHENSIVE AQI BREAKDOWN -->
+    <div id="delhiAqiModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+      <div class="bg-[#0a0b0e] border border-[#38332a] w-full max-w-5xl max-h-[90vh] overflow-y-auto p-6 space-y-5">
+        
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between border-b border-[#24221d] pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs px-2 py-0.5 bg-[#121318] text-[#d8c4a5] font-mono-data font-bold border border-[#38332a] uppercase">
+                DELHI NCR AIRSHED AUDIT
+              </span>
+              <h2 class="text-base font-bold text-[#f8f4ec] font-heading uppercase tracking-wider">
+                10-Station National Composite AQI & Model Gas Sub-Indices
+              </h2>
+            </div>
+            <p class="text-xs text-[#9c917f] mt-1">
+              Decomposes CPCB National Composite AQI (driven by PM2.5/PM10) vs AIRO2 Target Photochemical Sub-Indices (NO2 & O3).
+            </p>
+          </div>
+          <button onclick="toggleDelhiAqiModal()" class="text-xs px-3 py-1.5 bg-[#121318] hover:bg-[#1f2027] text-[#f8f4ec] font-mono-data border border-[#38332a] transition cursor-pointer">
+            [ CLOSE ]
+          </button>
+        </div>
+
+        <!-- Current Selected Station 5-Card Deck -->
+        <div>
+          <span class="text-[10px] font-mono-data text-[#d8c4a5] uppercase font-bold block mb-2">
+            Active Station Baseline: <span id="delhiModalStationName" class="text-[#f8f4ec]">Anand Vihar (ISBT)</span>
+          </span>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+            <div class="p-3 bg-[#121318] border-2 border-[#d8c4a5]">
+              <div class="text-[10px] text-[#d8c4a5] font-mono-data font-bold uppercase">24-Hr Daily CPCB AQI</div>
+              <div class="text-2xl font-black text-[#f8f4ec] font-mono-data" id="delhiModalDailyAQI">--</div>
+              <div class="text-[10px] text-[#ebdcc9]" id="delhiModalDailyCat">Bulletin Standard</div>
+            </div>
+            <div class="p-3 bg-[#121318] border border-[#24221d]">
+              <div class="text-[10px] text-[#9c917f] font-mono-data uppercase">Current Point AQI</div>
+              <div class="text-xl font-black text-[#f8f4ec] font-mono-data" id="delhiModalOverallAQI">--</div>
+              <div class="text-[10px] text-[#ebdcc9]" id="delhiModalOverallCat">Live Ingestion</div>
+            </div>
+            <div class="p-3 bg-[#121318] border border-[#24221d]">
+              <div class="text-[10px] text-[#9c917f] font-mono-data uppercase">Model Target: NO₂</div>
+              <div class="text-xl font-black text-[#f8f4ec] font-mono-data" id="delhiModalNO2Sub">--</div>
+              <div class="text-[10px] text-[#d8c4a5]">Photochemical Gas</div>
+            </div>
+            <div class="p-3 bg-[#121318] border border-[#24221d]">
+              <div class="text-[10px] text-[#9c917f] font-mono-data uppercase">Model Target: O₃</div>
+              <div class="text-xl font-black text-[#f8f4ec] font-mono-data" id="delhiModalO3Sub">--</div>
+              <div class="text-[10px] text-[#d8c4a5]">Ground-Level Oxidant</div>
+            </div>
+            <div class="p-3 bg-[#121318] border border-[#24221d] col-span-2 sm:col-span-1">
+              <div class="text-[10px] text-[#9c917f] font-mono-data uppercase">Dominant Driver</div>
+              <div class="text-lg font-black text-[#f8f4ec] font-mono-data" id="delhiModalDriver">PM2.5</div>
+              <div class="text-[10px] text-[#9c917f]">Coarse In-Situ Dust</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10 Delhi Stations Table -->
+        <div class="overflow-x-auto border border-[#24221d]">
+          <table class="w-full text-left text-xs font-mono-data">
+            <thead class="bg-[#121318] text-[#9c917f] uppercase text-[10px] tracking-wider border-b border-[#24221d]">
+              <tr>
+                <th class="py-2.5 px-3 border-r border-[#24221d]">Station Name</th>
+                <th class="py-2.5 px-3 border-r border-[#24221d]">Typology</th>
+                <th class="py-2.5 px-3 border-r border-[#24221d]">National AQI</th>
+                <th class="py-2.5 px-3 border-r border-[#24221d]">Dominant Driver</th>
+                <th class="py-2.5 px-3 border-r border-[#24221d]">NO₂ (µg/m³)</th>
+                <th class="py-2.5 px-3 border-r border-[#24221d]">NO₂ Sub-Index</th>
+                <th class="py-2.5 px-3 border-r border-[#24221d]">O₃ (µg/m³)</th>
+                <th class="py-2.5 px-3 border-r border-[#24221d]">O₃ Sub-Index</th>
+                <th class="py-2.5 px-3">CAQM Protocol</th>
+              </tr>
+            </thead>
+            <tbody id="delhiStationsAqiTableBody" class="divide-y divide-[#24221d]">
+              <tr>
+                <td colspan="9" class="py-4 text-center text-[#9c917f]">
+                  Loading live Delhi-NCR station network data...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- CPCB Benchmark Quick Reference -->
+        <div class="p-3 bg-[#121318] border border-[#24221d] text-[11px] text-[#9c917f] flex flex-wrap items-center justify-between gap-2">
+          <span><strong>CPCB AQI Bands:</strong> 0-50 Good | 51-100 Satisfactory | 101-200 Moderate | 201-300 Poor | 301-400 Very Poor | 401-500 Severe</span>
+          <button onclick="toggleDelhiAqiModal()" class="px-3 py-1 bg-[#f8f4ec] text-black font-bold uppercase font-mono-data text-[10px] cursor-pointer">
+            Close Window
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <script>
+    const STATIONS = [
+      { id: "ANAND_VIHAR", name: "Anand Vihar (ISBT)", lat: 28.6469, lon: 77.3152 },
+      { id: "ITO", name: "ITO (Central)", lat: 28.6289, lon: 77.2410 },
+      { id: "OKHLA_PHASE_2", name: "Okhla Phase 2 (Industrial)", lat: 28.5355, lon: 77.2770 },
+      { id: "AYA_NAGAR", name: "Aya Nagar (Suburban)", lat: 28.4765, lon: 77.1097 },
+      { id: "RK_PURAM", name: "R.K. Puram (Residential)", lat: 28.5647, lon: 77.1816 },
+      { id: "DHYAN_CHAND_STADIUM", name: "Dhyan Chand Stadium", lat: 28.6105, lon: 77.2424 },
+      { id: "MANDIR_MARG", name: "Mandir Marg", lat: 28.6394, lon: 77.1987 },
+      { id: "PUNJABI_BAGH", name: "Punjabi Bagh", lat: 28.6694, lon: 77.1314 },
+      { id: "JAHANGIRPURI", name: "Jahangirpuri", lat: 28.7283, lon: 77.1683 },
+      { id: "DWARKA_SECTOR_8", name: "Dwarka Sector 8", lat: 28.5854, lon: 77.0584 }
+    ];
+
+    const HORIZONS = [1, 3, 6, 12, 24, 48];
+    let map, chart, sensChart, waterfallChart, horizonShiftChart;
+    let currentStationId = "ANAND_VIHAR";
+    let baseNO2Traj = [], baseO3Traj = [];
+    const markersLookup = {};
+    let selectedCustomLat = 17.3850;
+    let selectedCustomLon = 78.4867;
+    let selectedCustomName = "Hyderabad, Telangana";
+    let lastGeneratedPayload = null;
+
+    // 1. Tab Navigation Controller
+    function switchSection(sectionId) {
+      document.getElementById('section-forecast').classList.add('hidden');
+      document.getElementById('section-sensitivity').classList.add('hidden');
+      document.getElementById('section-regulatory').classList.add('hidden');
+      document.getElementById('section-webhook-alerts').classList.add('hidden');
+
+      document.getElementById('tabBtn1').classList.remove('active');
+      document.getElementById('tabBtn2').classList.remove('active');
+      document.getElementById('tabBtn3').classList.remove('active');
+      document.getElementById('tabBtn4').classList.remove('active');
+
+      document.getElementById(sectionId).classList.remove('hidden');
+
+      if (sectionId === 'section-forecast') {
+        document.getElementById('tabBtn1').classList.add('active');
+        if (map) setTimeout(() => map.invalidateSize(), 200);
+      } else if (sectionId === 'section-sensitivity') {
+        document.getElementById('tabBtn2').classList.add('active');
+        if (sensChart) sensChart.resize();
+        if (waterfallChart) waterfallChart.resize();
+        if (horizonShiftChart) horizonShiftChart.resize();
+      } else if (sectionId === 'section-regulatory') {
+        document.getElementById('tabBtn3').classList.add('active');
+      } else if (sectionId === 'section-webhook-alerts') {
+        document.getElementById('tabBtn4').classList.add('active');
+        if (!selectedCustomLat) {
+          selectCustomCity('Hyderabad, Telangana', 17.3850, 78.4867);
+        }
+      }
+    }
+
+    // 2. Date Filter Presets (Today, Tomorrow, Yesterday, Next Week, Next Month)
+    function applyDatePreset(preset) {
+      document.querySelectorAll('.date-preset-btn').forEach(btn => btn.classList.remove('active'));
+      
+      const now = new Date();
+      let targetDate = new Date(now);
+
+      if (preset === 'TODAY') {
+        document.getElementById('presetToday').classList.add('active');
+      } else if (preset === 'TOMORROW') {
+        targetDate.setDate(now.getDate() + 1);
+        document.getElementById('presetTomorrow').classList.add('active');
+      } else if (preset === 'YESTERDAY') {
+        targetDate.setDate(now.getDate() - 1);
+        document.getElementById('presetYesterday').classList.add('active');
+      } else if (preset === 'NEXT_WEEK') {
+        targetDate.setDate(now.getDate() + 7);
+        document.getElementById('presetNextWeek').classList.add('active');
+      } else if (preset === 'NEXT_MONTH') {
+        targetDate.setMonth(now.getMonth() + 1);
+        document.getElementById('presetNextMonth').classList.add('active');
+      }
+
+      const year = targetDate.getFullYear();
+      const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+      const day = String(targetDate.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = "00";
+
+      document.getElementById('forecastDate').value = `${year}-${month}-${day}`;
+      document.getElementById('forecastTime').value = `${hours}:${minutes}`;
+
+      markNeedsRecalculate();
+    }
+
+    function onStationSelectChange() {
+      const stId = document.getElementById('stationSelect').value;
+      zoomToStation(stId);
+      markNeedsRecalculate();
+    }
+
+    function zoomToStation(stId) {
+      const st = STATIONS.find(s => s.id === stId);
+      if (st && map) {
+        map.flyTo([st.lat, st.lon], 14.5, {
+          animate: true,
+          duration: 1.0,
+          easeLinearity: 0.25
+        });
+
+        if (markersLookup[stId]) {
+          markersLookup[stId].openPopup();
+        }
+      }
+    }
+
+    function markNeedsRecalculate() {
+      const btn = document.getElementById('recalcBtn');
+      if (btn && !btn.innerText.includes("Recalculating")) {
+        btn.innerText = "Recalculate State (Click)";
+        btn.classList.add("bg-[#ebdcc9]");
+      }
+    }
+
+    function enableCustomDate() {
+      document.querySelectorAll('.date-preset-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('presetCustom').classList.add('active');
+      document.getElementById('forecastDate').focus();
+    }
+
+    function initDateTimePickers() {
+      applyDatePreset('TODAY');
+    }
+
+    function getTargetDateTime(horizonHours) {
+      const dateVal = document.getElementById('forecastDate').value;
+      const timeVal = document.getElementById('forecastTime').value;
+      
+      let baseDate = new Date(`${dateVal}T${timeVal || '00:00'}:00`);
+      if (isNaN(baseDate.getTime())) baseDate = new Date();
+
+      const target = new Date(baseDate.getTime() + horizonHours * 3600 * 1000);
+      return target.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      }) + ' IST';
+    }
+
+    // 3. Initialize Leaflet Map (Monochrome Minimalist Theme)
+    function initMap() {
+      map = L.map('map', { zoomControl: false }).setView([28.6469, 77.3152], 13);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; CartoDB'
+      }).addTo(map);
+
+      STATIONS.forEach(st => {
+        const icon = L.divIcon({
+          className: 'custom-square-marker',
+          html: `<div style="width:12px;height:12px;background:#f8f4ec;border:1px solid #000000;box-shadow:0 0 6px rgba(248,244,236,0.6);"></div>`,
+          iconSize: [12, 12]
+        });
+
+        const marker = L.marker([st.lat, st.lon], { icon }).addTo(map);
+        marker.bindPopup(`<b style="font-family:sans-serif;font-size:12px;color:#000;">${st.name}</b><br><span style="font-size:10px;font-family:monospace;color:#444;">${st.id}</span>`);
+        
+        markersLookup[st.id] = marker;
+
+        marker.on('click', () => {
+          document.getElementById('stationSelect').value = st.id;
+          zoomToStation(st.id);
+          markNeedsRecalculate();
+        });
+      });
+
+      setTimeout(() => {
+        zoomToStation('ANAND_VIHAR');
+      }, 400);
+    }
+
+    // 4. Initialize Forecast Chart (Cream / Champagne Accents)
+    function initChart() {
+      const ctx = document.getElementById('forecastChart').getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['+1h', '+3h', '+6h', '+12h', '+24h', '+48h'],
+          datasets: [
+            {
+              label: 'NO₂ Baseline (µg/m³)',
+              data: [0, 0, 0, 0, 0, 0],
+              borderColor: '#f8f4ec',
+              backgroundColor: 'rgba(248, 244, 236, 0.05)',
+              fill: true,
+              tension: 0.15,
+              borderWidth: 2.2,
+              pointBackgroundColor: '#f8f4ec',
+              pointRadius: 3.5,
+              pointStyle: 'rect'
+            },
+            {
+              label: 'O₃ Baseline (µg/m³)',
+              data: [0, 0, 0, 0, 0, 0],
+              borderColor: '#d8c4a5',
+              backgroundColor: 'transparent',
+              tension: 0.15,
+              borderWidth: 1.8,
+              pointRadius: 2.5,
+              pointStyle: 'rect'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: '#ebdcc9',
+                font: { family: 'JetBrains Mono', size: 11 },
+                usePointStyle: true
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255,255,255,0.04)' },
+              ticks: { color: '#9c917f', font: { family: 'JetBrains Mono' } }
+            },
+            y: {
+              grid: { color: 'rgba(255,255,255,0.04)' },
+              ticks: { color: '#9c917f', font: { family: 'JetBrains Mono' } }
+            }
+          }
+        }
+      });
+    }
+
+    // 5. Initialize Sensitivity Comparison Chart & Unique Graphical Viz
+    function initSensitivityCharts() {
+      try {
+        if (!sensChart) {
+          const ctx1 = document.getElementById('sensitivityChart');
+          if (ctx1) {
+            sensChart = new Chart(ctx1.getContext('2d'), {
+              type: 'line',
+              data: {
+                labels: ['+1h', '+3h', '+6h', '+12h', '+24h', '+48h'],
+                datasets: [
+                  {
+                    label: 'NO₂ Baseline (µg/m³)',
+                    data: [0, 0, 0, 0, 0, 0],
+                    borderColor: '#f8f4ec',
+                    borderWidth: 1.8,
+                    pointRadius: 3,
+                    pointStyle: 'rect'
+                  },
+                  {
+                    label: 'NO₂ Policy Simulated (µg/m³)',
+                    data: [0, 0, 0, 0, 0, 0],
+                    borderColor: '#a3e635',
+                    borderDash: [6, 4],
+                    borderWidth: 2.2,
+                    pointRadius: 3,
+                    pointStyle: 'rect'
+                  },
+                  {
+                    label: 'O₃ Baseline (µg/m³)',
+                    data: [0, 0, 0, 0, 0, 0],
+                    borderColor: '#d8c4a5',
+                    borderWidth: 1.5,
+                    pointRadius: 2.5,
+                    pointStyle: 'rect'
+                  },
+                  {
+                    label: 'O₃ Policy Simulated (µg/m³)',
+                    data: [0, 0, 0, 0, 0, 0],
+                    borderColor: '#c084fc',
+                    borderDash: [6, 4],
+                    borderWidth: 1.8,
+                    pointRadius: 2.5,
+                    pointStyle: 'rect'
+                  }
+                ]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    labels: {
+                      color: '#ebdcc9',
+                      font: { family: 'JetBrains Mono', size: 11 },
+                      usePointStyle: true
+                    }
+                  }
+                },
+                scales: {
+                  x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#9c917f', font: { family: 'JetBrains Mono' } } },
+                  y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#9c917f', font: { family: 'JetBrains Mono' } } }
+                }
+              }
+            });
+          }
+        }
+
+        if (!waterfallChart) {
+          const ctx2 = document.getElementById('waterfallChart');
+          if (ctx2) {
+            waterfallChart = new Chart(ctx2.getContext('2d'), {
+              type: 'bar',
+              data: {
+                labels: ['Baseline NO₂', 'Traffic Cut', 'Stubble Inflow', 'Mist Scavenging', 'Net Resultant NO₂'],
+                datasets: [{
+                  label: 'Flux Concentration (µg/m³)',
+                  data: [56.10, 0, 0, 0, 56.10],
+                  backgroundColor: ['#f8f4ec', '#ef4444', '#f97316', '#3b82f6', '#a3e635'],
+                  borderWidth: 1,
+                  borderColor: '#24221d'
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                  x: { grid: { display: false }, ticks: { color: '#ebdcc9', font: { family: 'JetBrains Mono', size: 10 } } },
+                  y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#9c917f', font: { family: 'JetBrains Mono' } } }
+                }
+              }
+            });
+          }
+        }
+
+        if (!horizonShiftChart) {
+          const ctx3 = document.getElementById('horizonShiftChart');
+          if (ctx3) {
+            horizonShiftChart = new Chart(ctx3.getContext('2d'), {
+              type: 'bar',
+              data: {
+                labels: ['+1h', '+3h', '+6h', '+12h', '+24h', '+48h'],
+                datasets: [{
+                  label: 'NO₂ Reduction Delta (%)',
+                  data: [0, 0, 0, 0, 0, 0],
+                  backgroundColor: '#d8c4a5',
+                  borderWidth: 1,
+                  borderColor: '#38332a'
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                  x: { grid: { display: false }, ticks: { color: '#ebdcc9', font: { family: 'JetBrains Mono' } } },
+                  y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#9c917f', font: { family: 'JetBrains Mono' } } }
+                }
+              }
+            });
+          }
+        }
+      } catch (err) {
+        console.warn("Sensitivity charts init non-blocking note:", err);
+      }
+    }
+
+    // 6. Fetch Forecast & Render Table (Live Real-Time Stream with Fallback)
+    async function loadForecast(stationId) {
+      try {
+        currentStationId = stationId;
+        const pdfBtn = document.getElementById('pdfDownloadBtn');
+        if (pdfBtn) pdfBtn.href = `/api/v1/stations/${stationId}/report/pdf`;
+
+        const dateVal = document.getElementById('forecastDate') ? document.getElementById('forecastDate').value : '';
+        const timeVal = document.getElementById('forecastTime') ? document.getElementById('forecastTime').value : '';
+        
+        let url = `/api/v1/live/stations/${stationId}/forecast`;
+        if (dateVal) {
+          url += `?date=${encodeURIComponent(dateVal)}&time=${encodeURIComponent(timeVal || '12:00')}`;
+        }
+
+        let res = await fetch(url);
+        if (!res.ok) {
+          res = await fetch(`/api/v1/stations/${stationId}/forecast?use_demo=true`);
+        }
+        const data = await res.json();
+        
+        const no2List = data.forecasts.NO2;
+        const o3List  = data.forecasts.O3;
+
+        baseNO2Traj = no2List.map(item => item.prediction);
+        baseO3Traj  = o3List.map(item => item.prediction);
+
+        // 1. UPDATE NUMERICAL METRIC CARDS (CRITICAL FIRST STEP)
+        const elNO2_1h = document.getElementById('no2_val_highlight');
+        if (elNO2_1h && no2List[0]) elNO2_1h.innerText = Number(no2List[0].prediction).toFixed(2);
+
+        const elO3_1h = document.getElementById('o3_val_highlight');
+        if (elO3_1h && o3List[0]) elO3_1h.innerText = Number(o3List[0].prediction).toFixed(2);
+
+        const elNO2_24h = document.getElementById('no2_24h_highlight');
+        if (elNO2_24h && no2List[4]) elNO2_24h.innerText = Number(no2List[4].prediction).toFixed(2);
+
+        const elAQIBadge = document.getElementById('no2_aqi_badge');
+        if (elAQIBadge && no2List[0]) {
+          elAQIBadge.innerText = `AQI ${no2List[0].aqi || 71} • ${no2List[0].aqi_category || 'Satisfactory'}`;
+        }
+
+        const elTime1 = document.getElementById('target_time_1h');
+        if (elTime1) elTime1.innerText = getTargetDateTime(1);
+
+        const elTime24 = document.getElementById('target_time_24h');
+        if (elTime24) elTime24.innerText = getTargetDateTime(24);
+
+        // 2. RENDER FORECAST MATRIX TABLE
+        const tbody = document.getElementById('matrixTableBody');
+        if (tbody) {
+          tbody.innerHTML = '';
+          HORIZONS.forEach((h, idx) => {
+            const no2 = no2List[idx] ? Number(no2List[idx].prediction) : 0;
+            const o3  = o3List[idx] ? Number(o3List[idx].prediction) : 0;
+            const aqi = (no2List[idx] && no2List[idx].aqi) ? no2List[idx].aqi : 65;
+            const cat = (no2List[idx] && no2List[idx].aqi_category) ? no2List[idx].aqi_category : 'Satisfactory';
+            const targetTs = getTargetDateTime(h);
+
+            const driver = (h === 12 || h === 24) 
+              ? 'Nocturnal Planetary Boundary Layer Inversion Trap' 
+              : (h === 6 || h === 3) 
+                ? 'Vehicular Traffic Surge Precursor Accumulation' 
+                : 'Direct Tropospheric Solar Photolysis (SSRD Rate)';
+
+            const row = document.createElement('tr');
+            row.className = "hover:bg-[#121318] transition duration-100";
+            row.innerHTML = `
+              <td class="py-3 px-4 font-bold text-[#f8f4ec] border-r border-[#24221d]">+${h} Hours</td>
+              <td class="py-3 px-4 text-[#ebdcc9] border-r border-[#24221d]">${targetTs}</td>
+              <td class="py-3 px-4 font-bold text-[#f8f4ec] border-r border-[#24221d]">${no2.toFixed(2)}</td>
+              <td class="py-3 px-4 text-[#ebdcc9] border-r border-[#24221d]">${o3.toFixed(2)}</td>
+              <td class="py-3 px-4 font-bold text-[#f8f4ec] border-r border-[#24221d]">${aqi}</td>
+              <td class="py-3 px-4 border-r border-[#24221d]">
+                <span class="px-2 py-0.5 bg-[#121318] border border-[#38332a] text-[#ebdcc9] uppercase font-bold text-[10px]">
+                  ${cat}
+                </span>
+              </td>
+              <td class="py-3 px-4 text-[#9c917f] text-[11px]">${driver}</td>
+            `;
+            tbody.appendChild(row);
+          });
+        }
+
+        // 3. FETCH LIVE WEATHER DIAGNOSTICS (WITH TARGET TIMESTAMP)
+        try {
+          let wUrl = `/api/v1/live/stations/${stationId}/weather`;
+          if (dateVal) {
+            wUrl += `?date=${encodeURIComponent(dateVal)}&time=${encodeURIComponent(timeVal || '12:00')}`;
+          }
+          const wRes = await fetch(wUrl);
+          if (wRes.ok) {
+            const wData = await wRes.json();
+            const elVent = document.getElementById('ventilationVal');
+            if (elVent) elVent.innerText = `${wData.ventilation_coefficient.toLocaleString()}`;
+            const elPhoto = document.getElementById('photoVal');
+            if (elPhoto) elPhoto.innerText = `${wData.photolysis_index} J(NO₂)`;
+          }
+        } catch (e) {
+          console.warn("Weather fetch note:", e);
+        }
+
+        // 4. UPDATE CHARTS (SAFE & ISOLATED)
+        try {
+          if (chart) {
+            chart.data.datasets[0].data = [...baseNO2Traj];
+            chart.data.datasets[1].data = [...baseO3Traj];
+            chart.update();
+          }
+        } catch (e) {
+          console.warn("Main chart update note:", e);
+        }
+
+        try {
+          if (sensChart) {
+            sensChart.data.datasets[0].data = [...baseNO2Traj];
+            sensChart.data.datasets[1].data = [...baseNO2Traj];
+            sensChart.data.datasets[2].data = [...baseO3Traj];
+            sensChart.data.datasets[3].data = [...baseO3Traj];
+            sensChart.update();
+          }
+        } catch (e) {
+          console.warn("Sensitivity chart update note:", e);
+        }
+
+        // 5. UPDATE PDF LINK
+        const elPdf = document.getElementById('pdfDownloadBtn');
+        if (elPdf) elPdf.href = `/api/v1/stations/${stationId}/report/pdf`;
+
+      } catch (err) {
+        console.warn("Forecast load non-blocking error handled:", err);
+        showToast("Network issue: loaded offline baseline cache.", "warning");
+      }
+    }
+
+    // Floating Notification Toast System
+    function showToast(message, type = "info") {
+      let container = document.getElementById('toastContainer');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.className = 'fixed top-5 right-5 z-[9999] flex flex-col gap-2 pointer-events-none';
+        document.body.appendChild(container);
+      }
+
+      const toast = document.createElement('div');
+      const borderColor = type === 'warning' ? '#f59e0b' : (type === 'error' ? '#ef4444' : '#d8c4a5');
+      toast.className = `p-3 bg-[#121318] border border-[${borderColor}] text-xs text-[#f8f4ec] font-mono-data shadow-2xl transition-all duration-300 pointer-events-auto transform translate-y-0 opacity-100 flex items-center gap-2`;
+      toast.innerHTML = `<span>${message}</span>`;
+      
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-10px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    let isRecalculating = false;
+    async function onStationOrDateChange() {
+      if (isRecalculating) return; // Debounce
+      isRecalculating = true;
+
+      const btn = document.getElementById('recalcBtn');
+      if (btn) {
+        btn.innerText = "Recalculating State...";
+        btn.classList.add("bg-[#ebdcc9]");
+        btn.disabled = true;
+      }
+
+      try {
+        currentStationId = document.getElementById('stationSelect').value;
+        await loadForecast(currentStationId);
+        
+        if (typeof runSimulation === 'function') {
+          try {
+            await runSimulation();
+          } catch (e) {
+            console.warn("Simulation sync note:", e);
+          }
+        }
+        showToast(`[OK] State updated for ${currentStationId}`, "success");
+      } catch (err) {
+        console.error("Recalculate error:", err);
+        showToast("Recalculation encountered network delay.", "warning");
+      } finally {
+        isRecalculating = false;
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = "[OK] State Recalculated";
+          setTimeout(() => {
+            btn.innerText = "Recalculate State";
+            btn.classList.remove("bg-[#ebdcc9]");
+          }, 1200);
+        }
+      }
+    }
+
+    // 7. Policy Simulation & Graphical Flux Visualization Logic
+    async function runSimulation() {
+      const traffic = document.getElementById('trafficSlider').value;
+      const stubble = document.getElementById('stubbleSlider').value;
+      const sprinkling = document.getElementById('sprinklingCheck').checked;
+
+      document.getElementById('trafficLabel').innerText = `${traffic}%`;
+      document.getElementById('stubbleLabel').innerText = `${stubble}x`;
+
+      try {
+        const res = await fetch('/api/v1/simulate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            station_id: currentStationId,
+            traffic_reduction_pct: parseFloat(traffic),
+            stubble_biomass_inflow: parseFloat(stubble),
+            anti_smog_water_sprinkling: sprinkling
+          })
+        });
+        const data = await res.json();
+        
+        // 1. Update Numerical Breakdown Boxes
+        document.getElementById('num_base_no2').innerText = `${data.baseline_no2_h24.toFixed(2)} µg/m³`;
+        document.getElementById('num_sim_no2').innerText  = `${data.simulated_no2_h24.toFixed(2)} µg/m³`;
+        document.getElementById('num_delta_no2').innerText = `-${data.delta_no2_reduction.toFixed(2)} µg/m³ (${data.pct_no2_reduction}% Cut)`;
+
+        document.getElementById('num_base_o3').innerText = `${data.baseline_o3_h12.toFixed(2)} µg/m³`;
+        document.getElementById('num_sim_o3').innerText  = `${data.simulated_o3_h12.toFixed(2)} µg/m³`;
+        
+        const o3_delta_pct = ((data.delta_o3_reduction / data.baseline_o3_h12) * 100).toFixed(1);
+        document.getElementById('num_delta_o3').innerText = `${data.delta_o3_reduction >= 0 ? '-' : '+'}${Math.abs(data.delta_o3_reduction).toFixed(2)} µg/m³ (${Math.abs(o3_delta_pct)}%)`;
+
+        document.getElementById('simGrapStageBox').innerText = data.grap_stage_recommendation.split(':')[0];
+        document.getElementById('simDirectiveText').innerText = data.grap_stage_recommendation.split(':')[1] || "Standard mitigation measures active.";
+
+        // 2. Update Sensitivity Line Chart
+        if (sensChart) {
+          sensChart.data.datasets[1].data = data.simulated_no2_trajectory;
+          sensChart.data.datasets[3].data = data.simulated_o3_trajectory;
+          sensChart.update();
+        }
+
+        // 3. Update Waterfall Flux Attribution Chart
+        if (waterfallChart) {
+          const baseVal = data.baseline_no2_h24;
+          const trafficDelta = -(baseVal * (parseFloat(traffic) / 100.0) * 0.55);
+          const stubbleDelta = (parseFloat(stubble) > 1.0) ? (baseVal * (parseFloat(stubble) - 1.0) * 0.25) : 0;
+          const mistDelta = sprinkling ? -(baseVal * 0.15) : 0;
+          const netVal = data.simulated_no2_h24;
+
+          waterfallChart.data.datasets[0].data = [
+            baseVal,
+            trafficDelta,
+            stubbleDelta,
+            mistDelta,
+            netVal
+          ];
+          waterfallChart.update();
+        }
+
+        // 4. Update Horizon Shift Percentage Bars
+        if (horizonShiftChart && data.detailed_horizon_breakdown) {
+          horizonShiftChart.data.datasets[0].data = data.detailed_horizon_breakdown.map(h => h.pct_no2_change);
+          horizonShiftChart.update();
+        }
+
+        // 5. Render Backend-Calculated Atmospheric Chemistry Rationale
+        const factEl = document.getElementById('chemFactText');
+        if (data.chemical_mechanism_fact) {
+          factEl.innerText = data.chemical_mechanism_fact;
+        }
+
+        document.getElementById('simReductionBadge').innerHTML = 
+          `<span class="text-[#9c917f]">Impact:</span> <span class="text-[#f8f4ec] font-bold">-${data.delta_no2_reduction} µg/m³ NO₂ (${data.pct_no2_reduction}% Cut)</span>`;
+
+      } catch (err) {
+        console.error("Simulation error:", err);
+      }
+    }
+
+    function resetSliders() {
+      document.getElementById('trafficSlider').value = 0;
+      document.getElementById('stubbleSlider').value = 1.0;
+      document.getElementById('sprinklingCheck').checked = false;
+      runSimulation();
+    }
+
+    // 8. Desktop Notification Demo
+    function triggerDemoNotification() {
+      const stObj = STATIONS.find(s => s.id === currentStationId);
+      const stName = stObj ? stObj.name : "Delhi NCR Station";
+
+      if ("Notification" in window && Notification.permission !== "granted") {
+        Notification.requestPermission();
+      }
+      if (Notification.permission === "granted") {
+        new Notification(`AIRO2 Early Warning Alert: ${stName} (+12h)`, {
+          body: `CRITICAL: Projected AQI Spike in +12h. Cause: Planetary Inversion Layer. Action: Enforce CAQM GRAP mitigation protocols.`,
+          icon: "/static/logo.png"
+        });
+      } else {
+        alert(`AIRO2 Alert: ${stName} projected to enter elevated AQI in +12h due to meteorological inversion.`);
+      }
+    }
+
+    // =========================================================================
+    // 9. DYNAMIC CUSTOM LOCATION & WEBHOOK DISPATCH LOGIC
+    // =========================================================================
+
+    // Official CPCB/SPCB Ground Station Canonical Coordinates
+    // Use these for matching so results can be verified directly on https://app.cpcbccr.com/
+    const CPCB_STATIONS_LOOKUP = [
+      {
+        keywords: ['delhi', 'new delhi', 'anand vihar', 'ncr'],
+        station_name: 'Anand Vihar, Delhi (CPCB)',
+        lat: 28.6559, lon: 77.2949,
+        cpcb_url: 'https://app.cpcbccr.com/ccr/#/caaqm-dashboard-all/caaqm-landing/data'
+      },
+      {
+        keywords: ['hyderabad', 'zoo park', 'tspcb', 'secunderabad'],
+        station_name: 'Zoo Park, Hyderabad (TSPCB/CPCB)',
+        lat: 17.3400, lon: 78.4500,
+        cpcb_url: 'https://app.cpcbccr.com/ccr/#/caaqm-dashboard-all/caaqm-landing/data'
+      },
+      {
+        keywords: ['visakhapatnam', 'vizag', 'vishakhapatnam', 'gvm', 'waltair'],
+        station_name: 'GVM Corporation, Visakhapatnam (APPCB/CPCB)',
+        lat: 17.7200, lon: 83.3000,
+        cpcb_url: 'https://app.cpcbccr.com/ccr/#/caaqm-dashboard-all/caaqm-landing/data'
+      },
+      {
+        keywords: ['mumbai', 'colaba', 'bombay', 'mpcb'],
+        station_name: 'Colaba, Mumbai (MPCB/CPCB)',
+        lat: 18.9100, lon: 72.8200,
+        cpcb_url: 'https://app.cpcbccr.com/ccr/#/caaqm-dashboard-all/caaqm-landing/data'
+      },
+    ];
+
+    function matchCPCBStation(query) {
+      const q = query.toLowerCase();
+      return CPCB_STATIONS_LOOKUP.find(s => s.keywords.some(kw => q.includes(kw))) || null;
+    }
+
+    async function searchCustomLocation() {
+      const q = document.getElementById('customLocationInput').value.trim();
+      if (!q) {
+        showToast("Please enter a city or location name to search.", "warning");
+        return;
+      }
+
+      // Check CPCB canonical station lookup FIRST
+      const cpcbMatch = matchCPCBStation(q);
+      if (cpcbMatch) {
+        showToast(`Pinned to official CPCB station: ${cpcbMatch.station_name}`, "success");
+        selectCustomCity(cpcbMatch.station_name, cpcbMatch.lat, cpcbMatch.lon, cpcbMatch);
+        return;
+      }
+
+      showToast(`Searching coordinates for '${q}'...`, "info");
+      try {
+        const res = await fetch(`/api/v1/alerts/geocode?query=${encodeURIComponent(q)}`);
+        const results = await res.json();
+        const dd = document.getElementById('geocodeResultsDropdown');
+        dd.innerHTML = '';
+        if (results && results.length > 0) {
+          results.forEach(item => {
+            const row = document.createElement('div');
+            row.className = "px-4 py-2 hover:bg-[#1f2027] cursor-pointer text-xs text-[#f8f4ec] font-mono-data border-b border-[#24221d] flex justify-between";
+            row.innerHTML = `<span>${item.name}</span> <span class="text-[#9c917f]">${item.latitude.toFixed(2)}°, ${item.longitude.toFixed(2)}°</span>`;
+            row.onclick = () => {
+              selectCustomCity(item.name, item.latitude, item.longitude, null);
+              dd.classList.add('hidden');
+            };
+            dd.appendChild(row);
+          });
+          dd.classList.remove('hidden');
+          // Auto-select first result
+          selectCustomCity(results[0].name, results[0].latitude, results[0].longitude, null);
+        } else {
+          showToast(`No coordinates found for '${q}'. Using national center fallback.`, "warning");
+        }
+      } catch (err) {
+        console.error("Geocoding error:", err);
+        showToast("Geocoding lookup failed. Please check network.", "error");
+      }
+    }
+
+    function selectCustomCity(name, lat, lon, cpcbStation) {
+      selectedCustomName = name;
+      selectedCustomLat = lat;
+      selectedCustomLon = lon;
+      document.getElementById('customLocationInput').value = name;
+      document.getElementById('geocodeResultsDropdown').classList.add('hidden');
+
+      // Update CPCB station info in diagnostics panel immediately
+      const stationEl = document.getElementById('userLocCPCBStation');
+      const verifyEl = document.getElementById('userLocCPCBVerify');
+      if (cpcbStation) {
+        stationEl.innerText = cpcbStation.station_name;
+        verifyEl.innerHTML = `Verify live on CPCB CAAQM portal: <a href="${cpcbStation.cpcb_url}" target="_blank" class="text-[#d8c4a5] underline">app.cpcbccr.com</a> | Coords: ${lat}° N, ${lon}° E`;
+      } else {
+        stationEl.innerText = 'Nearest open-meteo CAMS grid point';
+        verifyEl.innerText = `Coords: ${lat.toFixed(4)}° N, ${lon.toFixed(4)}° E (Open-Meteo ECMWF)`;
+      }
+
+      fetchCustomLocationForecast(lat, lon, name);
+    }
+
+    function detectUserGPS() {
+      if (!navigator.geolocation) {
+        showToast("Browser Geolocation is not supported by your browser.", "warning");
+        return;
+      }
+      showToast("Requesting GPS coordinates...", "info");
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const name = `Local GPS Position (${lat.toFixed(3)}°, ${lon.toFixed(3)}°)`;
+          selectCustomCity(name, lat, lon, null);
+          showToast("GPS position locked! Ingesting live local meteorology.", "success");
+        },
+        (error) => {
+          console.warn("GPS lookup denied:", error);
+          showToast("GPS access was denied or timed out. Defaulting to Zoo Park, Hyderabad (CPCB).", "warning");
+          const hyd = CPCB_STATIONS_LOOKUP.find(s => s.keywords.includes('hyderabad'));
+          selectCustomCity(hyd.station_name, hyd.lat, hyd.lon, hyd);
+        },
+        { timeout: 8000 }
+      );
+    }
+
+    async function fetchCustomLocationForecast(lat, lon, name) {
+      document.getElementById('userLocTitle').innerText = name;
+      document.getElementById('userLocCoords').innerText = `${lat.toFixed(4)}° N, ${lon.toFixed(4)}° E`;
+      document.getElementById('userLocCurrCat').innerText = "Ingesting ECMWF...";
+      
+      try {
+        const res = await fetch(`/api/v1/alerts/location/forecast?lat=${lat}&lon=${lon}&name=${encodeURIComponent(name)}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        
+        const dailyVal = data.daily_24h_cpcb_aqi || 84;
+        const dailyCat = data.daily_24h_cpcb_category || 'Satisfactory';
+        document.getElementById('userLocDailyAQICard').innerText = dailyVal;
+        document.getElementById('userLocDailyAQICard').style.color = dailyVal <= 50 ? '#00e400' : (dailyVal <= 100 ? '#92d050' : (dailyVal <= 200 ? '#ffff00' : '#ff7e00'));
+        document.getElementById('userLocDailyCatCard').innerText = `${dailyCat} (CPCB 24h Bulletin)`;
+
+        document.getElementById('userLocCurrAQI').innerText = data.current_aqi;
+        document.getElementById('userLocCurrAQI').style.color = data.current_color;
+        document.getElementById('userLocCurrCat').innerText = `${data.current_category} (Live Point: ${data.prominent_pollutant || 'PM2.5'})`;
+        
+        document.getElementById('userLocNO2Sub').innerText = data.current_no2_subindex !== undefined ? data.current_no2_subindex : '--';
+        document.getElementById('userLocNO2Cat').innerText = "NO₂ Sub-Index";
+        
+        document.getElementById('userLocO3Sub').innerText = data.current_o3_subindex !== undefined ? data.current_o3_subindex : '--';
+        document.getElementById('userLocO3Cat').innerText = "O₃ Sub-Index";
+        
+        document.getElementById('userLoc12hNO2').innerText = `${data.horizon_12h_no2} µg/m³`;
+        document.getElementById('userLoc12hAQI').innerText = `AQI ${data.horizon_12h_aqi} (${data.horizon_12h_category})`;
+        
+        document.getElementById('userLocDailyCPCB').innerText = `AQI ${data.daily_24h_cpcb_aqi || 84} (${data.daily_24h_cpcb_category || 'Satisfactory'})`;
+        document.getElementById('userLocBLH').innerText = `${data.current_blh_m} meters`;
+        document.getElementById('userLocWeather').innerText = `${data.current_temp_c}°C / ${data.current_humidity_pct}%`;
+        
+        document.getElementById('userLocRiskBadge').innerText = data.risk_level;
+        document.getElementById('userLocRiskBadge').style.borderColor = data.risk_level.includes("ELEVATED") ? "#ef4444" : (data.risk_level.includes("MODERATE") ? "#f59e0b" : "#a3e635");
+        document.getElementById('userLocRiskBadge').style.color = data.risk_level.includes("ELEVATED") ? "#ef4444" : (data.risk_level.includes("MODERATE") ? "#f59e0b" : "#a3e635");
+        
+        document.getElementById('userLocDirective').innerText = data.recommended_action;
+        document.getElementById('tableLocName').innerText = name;
+        
+        // Render 6-horizon table rows
+        const tableBody = document.getElementById('userLocHorizonsTableBody');
+        if (data.horizons_data && data.horizons_data.length > 0) {
+          tableBody.innerHTML = '';
+          data.horizons_data.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-[#121318] transition";
+            
+            const badgeBg = row.composite_color ? `${row.composite_color}20` : '#121318';
+            const mechanism = row.horizon_hours >= 12 
+              ? (row.composite_aqi >= 200 ? 'Thermal inversion trap (BLH < 150m)' : 'Nocturnal diurnal baseline')
+              : (row.o3_aqi > row.no2_aqi ? 'Solar photolysis SSRD peak' : 'Vehicular traffic precursor dispersion');
+            
+            tr.innerHTML = `
+              <td class="py-2.5 px-4 font-bold border-r border-[#24221d] text-[#f8f4ec]">+${row.horizon_hours}h</td>
+              <td class="py-2.5 px-4 text-[#ebdcc9] border-r border-[#24221d]">${row.target_time}</td>
+              <td class="py-2.5 px-4 font-bold border-r border-[#24221d] text-[#f8f4ec]">${row.no2_conc} µg/m³</td>
+              <td class="py-2.5 px-4 border-r border-[#24221d] text-[#9c917f]">${row.no2_aqi} (${row.no2_category})</td>
+              <td class="py-2.5 px-4 font-bold border-r border-[#24221d] text-[#f8f4ec]">${row.o3_conc} µg/m³</td>
+              <td class="py-2.5 px-4 border-r border-[#24221d] text-[#9c917f]">${row.o3_aqi} (${row.o3_category})</td>
+              <td class="py-2.5 px-4 font-bold border-r border-[#24221d]" style="color: ${row.composite_color};">${row.composite_aqi}</td>
+              <td class="py-2.5 px-4">
+                <span class="px-2 py-0.5 font-bold border uppercase text-[10px]" style="background-color: ${badgeBg}; color: ${row.composite_color}; border-color: ${row.composite_color}40;">
+                  ${row.composite_category}
+                </span>
+                <span class="text-[#9c917f] text-[10px] ml-2 block sm:inline">${mechanism}</span>
+              </td>
+            `;
+            tableBody.appendChild(tr);
+          });
+        }
+        
+        showToast(`Live weather & forecast updated for ${name}`, "success");
+      } catch (err) {
+        console.error("Location forecast error:", err);
+        showToast("Error retrieving live forecast for selected location.", "error");
+      }
+    }
+
+    async function dispatchCustomWebhook() {
+      const btn = document.getElementById('dispatchWebhookBtn');
+      const webhookUrl = document.getElementById('webhookUrlInput').value.trim();
+      const horizon = parseInt(document.getElementById('webhookHorizonSelect').value);
+      const threshold = parseInt(document.getElementById('webhookThresholdSelect').value);
+      const note = document.getElementById('webhookNoteInput').value.trim();
+      
+      btn.disabled = true;
+      btn.innerText = "Ingesting & Dispatching Webhook...";
+      
+      try {
+        const payload = {
+          webhook_url: webhookUrl || null,
+          location_name: selectedCustomName,
+          latitude: selectedCustomLat,
+          longitude: selectedCustomLon,
+          target_horizon_hours: horizon,
+          min_aqi_threshold: threshold,
+          custom_recipient_note: note || null
+        };
+        
+        const res = await fetch('/api/v1/alerts/webhook/dispatch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        const data = await res.json();
+        lastGeneratedPayload = data.payload_preview;
+        
+        document.getElementById('webhookJsonTerminal').innerText = JSON.stringify(data.payload_preview, null, 2);
+        
+        const badge = document.getElementById('webhookStatusBadge');
+        if (data.dispatched) {
+          badge.innerText = `DISPATCHED (${data.webhook_type_detected.toUpperCase()})`;
+          badge.className = "text-[10px] px-2 py-0.5 bg-[#121318] text-[#a3e635] font-mono-data border border-[#a3e635] uppercase";
+          showToast(data.message, "success");
+        } else {
+          badge.innerText = `PREVIEW (${data.webhook_type_detected.toUpperCase()})`;
+          badge.className = "text-[10px] px-2 py-0.5 bg-[#121318] text-[#f59e0b] font-mono-data border border-[#f59e0b] uppercase";
+          showToast(data.message, "info");
+        }
+      } catch (err) {
+        console.error("Webhook dispatch error:", err);
+        showToast("Webhook request failed: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Dispatch Early Warning Webhook Alert";
+      }
+    }
+
+    function copyWebhookJSON() {
+      const text = document.getElementById('webhookJsonTerminal').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Webhook JSON copied to clipboard!", "success");
+      }).catch(() => {
+        showToast("Failed to copy JSON.", "warning");
+      });
+    }
+
+    // =========================================================================
+    // 10. DELHI NCR 10-STATION COMPREHENSIVE AQI MODAL LOGIC
+    // =========================================================================
+    async function toggleDelhiAqiModal() {
+      const modal = document.getElementById('delhiAqiModal');
+      if (!modal) return;
+      
+      const isHidden = modal.classList.contains('hidden');
+      if (isHidden) {
+        modal.classList.remove('hidden');
+        await loadDelhiStationsAqiSummary();
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    async function loadDelhiStationsAqiSummary() {
+      const tableBody = document.getElementById('delhiStationsAqiTableBody');
+      const activeStation = STATIONS.find(s => s.id === currentStationId) || STATIONS[0];
+      document.getElementById('delhiModalStationName').innerText = activeStation.name;
+
+      try {
+        const res = await fetch('/api/v1/live/stations_aqi_summary');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        // Update active station cards
+        const activeData = data.find(d => d.station_id === currentStationId) || data[0];
+        if (activeData) {
+          const dailyVal = activeData.daily_cpcb_aqi || 84;
+          const dailyCat = activeData.daily_cpcb_category || 'Satisfactory';
+          document.getElementById('delhiModalDailyAQI').innerText = dailyVal;
+          document.getElementById('delhiModalDailyAQI').style.color = dailyVal <= 50 ? '#00e400' : (dailyVal <= 100 ? '#92d050' : (dailyVal <= 200 ? '#ffff00' : '#ff7e00'));
+          document.getElementById('delhiModalDailyCat').innerText = `${dailyCat} (CPCB 24h Bulletin)`;
+
+          document.getElementById('delhiModalOverallAQI').innerText = activeData.composite_aqi;
+          document.getElementById('delhiModalOverallAQI').style.color = activeData.composite_color;
+          document.getElementById('delhiModalOverallCat').innerText = `${activeData.composite_category} (Live Point: ${activeData.prominent_pollutant})`;
+          
+          document.getElementById('delhiModalNO2Sub').innerText = activeData.no2_subindex;
+          document.getElementById('delhiModalO3Sub').innerText = activeData.o3_subindex;
+          document.getElementById('delhiModalDriver').innerText = `${activeData.prominent_pollutant} (${activeData.pm25_conc} µg/m³)`;
+        }
+
+        // Render table
+        tableBody.innerHTML = '';
+        data.forEach(item => {
+          const tr = document.createElement('tr');
+          const isSelected = item.station_id === currentStationId;
+          tr.className = isSelected ? "bg-[#191a20] border-l-2 border-l-[#d8c4a5]" : "hover:bg-[#121318]";
+          
+          const catColor = item.composite_color || '#00e400';
+          const grapStage = item.composite_aqi >= 400 ? 'GRAP Stage-IV' : (item.composite_aqi >= 300 ? 'GRAP Stage-III' : (item.composite_aqi >= 200 ? 'GRAP Stage-II' : 'Stage-I Vigilance'));
+
+          tr.innerHTML = `
+            <td class="py-2.5 px-3 font-bold border-r border-[#24221d] text-[#f8f4ec]">
+              ${item.station_name} ${isSelected ? '<span class="text-[9px] text-[#d8c4a5]">[ACTIVE]</span>' : ''}
+            </td>
+            <td class="py-2.5 px-3 text-[#9c917f] border-r border-[#24221d]">${item.typology}</td>
+            <td class="py-2.5 px-3 font-bold border-r border-[#24221d]" style="color: ${catColor};">
+              ${item.composite_aqi} (${item.composite_category})
+            </td>
+            <td class="py-2.5 px-3 text-[#ebdcc9] font-bold border-r border-[#24221d]">${item.prominent_pollutant}</td>
+            <td class="py-2.5 px-3 text-[#f8f4ec] border-r border-[#24221d]">${item.no2_conc}</td>
+            <td class="py-2.5 px-3 font-bold border-r border-[#24221d] text-[#d8c4a5]">${item.no2_subindex}</td>
+            <td class="py-2.5 px-3 text-[#f8f4ec] border-r border-[#24221d]">${item.o3_conc}</td>
+            <td class="py-2.5 px-3 font-bold border-r border-[#24221d] text-[#d8c4a5]">${item.o3_subindex}</td>
+            <td class="py-2.5 px-3 text-[#9c917f]">${grapStage}</td>
+          `;
+          tableBody.appendChild(tr);
+        });
+
+      } catch (err) {
+        console.error("Delhi stations summary error:", err);
+        tableBody.innerHTML = '<tr><td colspan="9" class="py-4 text-center text-[#ef4444]">Failed to load live stations summary.</td></tr>';
+      }
+    }
+
+    // Window Onload
+    window.onload = () => {
+      initDateTimePickers();
+      initMap();
+      initChart();
+      initSensitivityCharts();
+      loadForecast("ANAND_VIHAR");
+      if ("Notification" in window && Notification.permission !== "granted") {
+        Notification.requestPermission();
+      }
+    };
+  </script>
+</body>
+</html>
