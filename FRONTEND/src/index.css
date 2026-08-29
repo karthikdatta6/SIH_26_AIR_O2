@@ -1,0 +1,285 @@
+@import "tailwindcss";
+
+:root {
+  --cursor-reticle:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><line x1='12' y1='0' x2='12' y2='9' stroke='%23ffd400' stroke-width='2'/><line x1='12' y1='15' x2='12' y2='24' stroke='%23ffd400' stroke-width='2'/><line x1='0' y1='12' x2='9' y2='12' stroke='%23ffd400' stroke-width='2'/><line x1='15' y1='12' x2='24' y2='12' stroke='%23ffd400' stroke-width='2'/><circle cx='12' cy='12' r='2.3' fill='%23ff3b3b'/></svg>")
+    12 12,
+    crosshair;
+}
+
+@theme {
+  --font-mono: "JetBrains Mono", ui-monospace, "Courier New", monospace;
+  --font-display: "Anton", "Archivo Black", sans-serif;
+
+  /* The CRT UI leans on small tracked-out labels (text-xs everywhere) —
+     nudged up from Tailwind's default 0.75rem so they stay readable. */
+  --text-xs: 0.85rem;
+  --text-xs--line-height: 1.3rem;
+
+  --color-void: #08070a;
+  --color-bg: #0a0a08;
+  --color-panel: #0d0c09;
+  --color-panel-raised: #121008;
+
+  --color-border: rgba(196, 164, 90, 0.16);
+  --color-border-strong: rgba(196, 164, 90, 0.4);
+  --color-border-faint: rgba(196, 164, 90, 0.08);
+
+  --color-ink: #b8b0a0;
+  --color-ink-dim: #6e6858;
+  --color-ink-bright: #efe9d8;
+
+  --color-amber-300: #ecd48a;
+  --color-amber-400: #ddb654;
+  --color-amber-500: #caa03a;
+  --color-amber-600: #a37f26;
+  --color-amber-900: #2b2110;
+
+  /* Matched to the reference AQI category swatches (green/gold/
+     orange-red/red/purple/maroon), not the raw EPA hex codes (those are
+     far more saturated than this table's muted palette). */
+  --color-good: #3fb87f;
+  --color-moderate: #e0b23d;
+  --color-usg: #e2622f;
+  --color-unhealthy: #d93f3f;
+  --color-very-unhealthy: #7c4fd6;
+  --color-hazardous: #8a4a49;
+
+  --animate-scan: scan 3s linear infinite;
+  --animate-blink: blink 1.2s steps(1) infinite;
+  --animate-flicker: flicker 6s linear infinite;
+  --animate-scan-ring: scan-ring 4s ease-in-out infinite;
+}
+
+@keyframes pixel-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes pixel-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes scan-ring {
+  0%,
+  100% {
+    transform: scale(0.94);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 0.15;
+  }
+}
+
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes flicker {
+  0%,
+  96%,
+  100% {
+    opacity: 1;
+  }
+  97% {
+    opacity: 0.94;
+  }
+  98% {
+    opacity: 1;
+  }
+  99% {
+    opacity: 0.97;
+  }
+}
+
+/* Site-wide targeting-reticle cursor (yellow crosshair, red dot at
+   center) — !important so no library default (Leaflet's `.leaflet-
+   interactive { cursor: pointer }`, browser button/link defaults, etc.)
+   can ever swap it out on any element. */
+* {
+  box-sizing: border-box;
+  cursor: var(--cursor-reticle) !important;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html {
+  /* Bumps every rem-based Tailwind text size (text-xs, text-sm, ...)
+     proportionally, since the CRT UI leans heavily on small tracked-out
+     labels that were reading too small overall. */
+  font-size: 18px;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "tnum" 1;
+}
+
+::selection {
+  background: var(--color-amber-500);
+  color: #000;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+}
+
+/* CRT scanline overlay, applied to the whole viewport */
+.crt-layer {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0) 1px,
+    rgba(0, 0, 0, 0.18) 2px,
+    rgba(0, 0, 0, 0.18) 3px
+  );
+  opacity: 0.35;
+}
+
+.crt-vignette {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0) 55%,
+    rgba(0, 0, 0, 0.5) 100%
+  );
+}
+
+.text-shadow-amber {
+  text-shadow: 0 0 12px rgba(202, 160, 58, 0.35);
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(var(--color-border-faint) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-border-faint) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Leaflet: recolor CARTO's dark basemap toward the navy/cyan cartography
+   look, and strip the default light-mode chrome. */
+.leaflet-container {
+  background: #05070a;
+  font-family: var(--font-mono);
+}
+
+/* Applied once to the whole composited tile pane (not per-tile) so
+   filtering doesn't amplify hairline seams at tile edges. */
+.leaflet-tile-pane {
+  filter: saturate(2) hue-rotate(190deg) brightness(1.22) contrast(1.22);
+}
+
+/* Force adjacent tiles to overlap by a fraction of a pixel — otherwise the
+   faint antialiased edge between them gets amplified by the filter above
+   into a visible hairline seam. */
+.leaflet-tile {
+  width: 257px !important;
+  height: 257px !important;
+}
+
+.leaflet-div-icon {
+  background: transparent;
+  border: none;
+}
+
+
+.airwatch-marker-pulse {
+  position: absolute;
+  inset: -6px;
+  border: 1px solid;
+  animation: marker-pulse 1.6s ease-out infinite;
+}
+
+@keyframes marker-pulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+.leaflet-control-attribution {
+  background: rgba(8, 7, 10, 0.7) !important;
+  color: var(--color-ink-dim) !important;
+  font-family: var(--font-mono);
+  font-size: 9px !important;
+  letter-spacing: 0.05em;
+}
+
+.leaflet-control-attribution a {
+  color: var(--color-amber-400) !important;
+}
+
+.leaflet-control-zoom {
+  border: 1px solid var(--color-border-strong) !important;
+  border-radius: 0 !important;
+  overflow: hidden;
+  box-shadow: none !important;
+}
+
+.leaflet-control-zoom a {
+  background: rgba(8, 7, 10, 0.85) !important;
+  color: var(--color-amber-400) !important;
+  border-radius: 0 !important;
+  font-family: var(--font-mono);
+}
+
+.leaflet-control-zoom a:hover {
+  background: var(--color-amber-500) !important;
+  color: #08070a !important;
+}
+
+.leaflet-control-zoom-in {
+  border-bottom: 1px solid var(--color-border) !important;
+}
