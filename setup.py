@@ -1,0 +1,21 @@
+from setuptools import setup, find_packages
+setup(
+    name='airo2-backend',
+    version='1.0.0',
+    packages=find_packages(),
+    install_requires=[
+        'fastapi==0.115.0',
+        'uvicorn[standard]==0.30.6',
+        'pydantic==2.9.2',
+        'lightgbm>=4.0.0',
+        'scipy>=1.11.0',
+        'numpy>=1.24.0',
+        'pandas>=2.0.0',
+        'pyarrow>=14.0.0',
+        'python-multipart==0.0.9',
+        'httpx>=0.27.0',
+        'reportlab>=4.0.0',
+        'requests>=2.31.0',
+        'scikit-learn>=1.4.0',
+    ],
+)
