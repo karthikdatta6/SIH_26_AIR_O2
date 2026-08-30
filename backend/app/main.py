@@ -64,10 +64,13 @@ async def lifespan(app: FastAPI):
     logger.info("=" * 60)
     logger.info("AIRO2 API starting up — loading Phase 3 model bundles...")
     t0 = time.time()
-    ModelService.load_models()
-    elapsed = time.time() - t0
-    health = ModelService.health_check()
-    logger.info(f"Models loaded in {elapsed:.2f}s: {health}")
+    try:
+        ModelService.load_models()
+        elapsed = time.time() - t0
+        health = ModelService.health_check()
+        logger.info(f"Models loaded in {elapsed:.2f}s: {health}")
+    except Exception as e:
+        logger.warning(f"Model loading failed: {e}. API will start in degraded mode.")
     logger.info("=" * 60)
 
     task = None
